@@ -103,7 +103,7 @@ class Participants(models.Model):
                             blank=True, null=TRUE,)
 
     class Meta:
-        unique_together = ('race', 'name', 'surname', 'patronymic')
+        unique_together = ('race', 'name', 'surname', )
 
     def clean(self):
         verges = (self.category.number_start, self.category.number_end)
