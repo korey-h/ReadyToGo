@@ -1,11 +1,8 @@
-from django.core.exceptions import ValidationError
+
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.db.models import Q
 
-from .utilities import NumbersChecker
-
-START_NUM = 1
+from . import cleaners
 
 
 class Cups(models.Model):
@@ -93,7 +90,8 @@ class Participants(models.Model):
         default='-',)
     year = models.IntegerField(
         validators=[MinValueValidator(1940, message='Не старше 1940 г.р.'), ],
-        verbose_name="Год рождения")
+        verbose_name="Год рождения",
+        default=1940)
     number = models.IntegerField(
         validators=[MinValueValidator(1, message='Не меньше 1'), ],
         verbose_name="Стартовый номер")
@@ -108,28 +106,10 @@ class Participants(models.Model):
         unique_together = ('race', 'name', 'surname', 'patronymic')
 
     def clean(self):
-        verges = (self.category.number_start, self.category.number_end)
-        num_amount = self.race.numbers_amount
-        nums = list(self.race.race_participants.values_list(
-                    'number', flat=True)
-                    )
-        if not verges[0] or not verges[1]:
-            booked = list(self.race.race_categories.exclude(
-                Q(number_start=None) | Q(number_end=None)
-                ).values_list('number_start', 'number_end')
-            )
-            if booked:
-                free_ranges = NumbersChecker.get_free_ranges(
-                    booked, num_amount)
-                free_nums = NumbersChecker.range_free_nums(free_ranges, nums)
-            else:
-                free_nums = ((START_NUM, num_amount),)
-        else:
-            free_nums = NumbersChecker.range_free_nums((verges,), nums)
-
-        if not NumbersChecker.chek_free(self.number, free_nums):
-            raise ValidationError(
-                f"номер {self.number} не доступен для "
-                f"категории {self.category}. "
-                f"{NumbersChecker.str_free(free_nums)}"
-            )
+        print('>>>>>>>>>>>>>>>>>>', self.category.number_start)
+        person = None
+        if self.id:
+            person = Participants.objects.get(id=self.id)
+        if not person or (person.category != self.category or
+                          person.number != self.number):
+            cleaners.num_clean(self)

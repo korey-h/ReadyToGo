@@ -4,16 +4,18 @@ class NumbersChecker():
     # возвращает список своводных диапазонов в виде
     #  [(11,30), (32,32), (51, 100)]
     def get_free_ranges(booked, num_amount, start=1):
+        if not booked:
+            return [(start, num_amount)]
         booked.sort(key=lambda x: x[0])
-        free_nums = []
+        free_ranges = []
         for elem in booked:
             if start < elem[0]:
-                free_nums.append((start, elem[0]-1))
-                start = elem[1] + 1
+                free_ranges.append((start, elem[0]-1))
+            start = elem[1] + 1
         last_booked = booked[-1][1]
         if last_booked < num_amount:
-            free_nums.append((last_booked + 1, num_amount))
-        return free_nums
+            free_ranges.append((last_booked + 1, num_amount))
+        return free_ranges
 
     # принимает список свободных диапазонов вида [(11,30), (32,32), (51, 100)]
     # и список зарезервированных номеров (1,11,32,33,55)
