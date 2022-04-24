@@ -1,6 +1,9 @@
 
+from datetime import datetime
 from django.core.validators import MinValueValidator
 from django.db import models
+
+from slugify import slugify
 
 from . import cleaners
 
@@ -10,11 +13,16 @@ class Cups(models.Model):
         verbose_name="Название Кубка",
         max_length=200,
     )
-    slug = models.SlugField(max_length=70)
+    slug = models.SlugField(max_length=70, default='autoslug', blank=True)
     description = models.TextField(max_length=150, blank=True, null=True,)
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        if self.slug == 'autoslug' or not self.slug:
+            self.slug = slugify(self.name)
+        super(Cups, self).save(*args, **kwargs)
 
 
 class Races(models.Model):
@@ -22,7 +30,7 @@ class Races(models.Model):
         verbose_name="Название гонки",
         max_length=200,
     )
-    slug = models.SlugField(max_length=70)
+    slug = models.SlugField(max_length=70, default='autoslug', blank=True)
     date = models.DateField()
     cup = models.ForeignKey(Cups,
                             on_delete=models.CASCADE,
@@ -38,6 +46,12 @@ class Races(models.Model):
     def __str__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        if self.slug == 'autoslug' or not self.slug:
+            self.slug = (self.cup.slug + '-' + slugify(self.name) + '-'
+                         + datetime.strftime(self.date, '%d-%m-%y'))
+        super(Races, self).save(*args, **kwargs)
+
     class Meta:
         unique_together = [['slug', 'date']]
 
@@ -47,7 +61,7 @@ class Categories(models.Model):
         verbose_name="Название категории",
         max_length=50,
     )
-    slug = models.SlugField(max_length=70)
+    slug = models.SlugField(max_length=70, default='autoslug', blank=True)
     race = models.ForeignKey(Races,
                              on_delete=models.CASCADE,
                              related_name='race_categories',
@@ -66,6 +80,11 @@ class Categories(models.Model):
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        if self.slug == 'autoslug' or not self.slug:
+            self.slug = slugify(self.name)
+        super(Categories, self).save(*args, **kwargs)
 
 
 class Participants(models.Model):
@@ -106,7 +125,6 @@ class Participants(models.Model):
         unique_together = ('race', 'name', 'surname', 'patronymic')
 
     def clean(self):
-        print('>>>>>>>>>>>>>>>>>>', self.category.number_start)
         person = None
         if self.id:
             person = Participants.objects.get(id=self.id)
