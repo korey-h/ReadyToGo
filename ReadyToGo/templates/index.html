@@ -1,0 +1,15 @@
+﻿{% extends "base.html" %}
+{% block title %}Все соревнования{% endblock %}
+{% block content %}
+<div class="container"></div>  
+    {% for race in page %}  
+       <p>{{ race.date }}
+           <a href="{% url 'race_info' slug=race.slug %}">{{ race.name }}</a>
+            {{ race.cup }}  {{ race.town }}
+        </p>
+    {% endfor %}
+
+    {% include "includes/paginator.html" %}
+
+</div>  
+{% endblock %}
