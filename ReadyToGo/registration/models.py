@@ -35,6 +35,7 @@ class Races(models.Model):
     cup = models.ForeignKey(Cups,
                             on_delete=models.CASCADE,
                             related_name='cup_races',
+                            verbose_name="Группа гонок",
                             blank=True, null=True,)
     town = models.TextField(max_length=50)
     numbers_amount = models.IntegerField(
@@ -42,6 +43,10 @@ class Races(models.Model):
                     ]
     )
     description = models.TextField(max_length=150, blank=True, null=True)
+    is_active = models.BooleanField(
+        verbose_name="регистрация активна",
+        default=True
+    )
 
     def __str__(self):
         return self.name

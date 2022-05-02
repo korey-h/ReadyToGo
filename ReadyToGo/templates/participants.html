@@ -1,0 +1,46 @@
+﻿{% extends "base.html" %}
+{% block title %}Участники. {{ race.name }}. {% endblock %}
+{% block content %}
+<div class="container">
+    <article class="col-md-12 col-md-6">
+      <div class="card">
+        <h4 class="card-header">{{ race.name }}. Список участников</h4>  
+      </div>
+    </article>
+  </div>
+<div class="container"> 
+    <table class="table table-bordered table-sm" >
+      <thead style="background: rgb(158, 215, 225)"> 
+        <tr>
+          <th scope="col" >№ п/п</th> 
+          <th scope="col" > Ф.И.О. </th>
+          <th scope="col" > Год рождения </th> 
+          <th scope="col" > Стартовый номер </th>
+          <th scope="col" > Клуб </th>
+          <th scope="col" > Город </th>
+        </tr>
+      </thead>
+
+      <tbody>
+      {%for category in race.race_categories.all%}
+        <td colspan="6" style="background: rgb(240, 248, 255) " class="fw-bold">{{category.name}}</td>             
+        {% for member in participants %} 
+          {% if member.category == category %}  
+            <tr>
+                <td scope="row" >{{ forloop.counter }}</td>
+                <td> {{ member.name }} {{ member.surname }}</td>
+                <td> {{ member.year }} </td>
+                <td> {{ member.number }} </td>
+                <td> {{ member.club }} </td>
+                <td> {{ member.Town }} </td>
+            </tr> 
+          {% endif %}
+        {% endfor %}
+       {% endfor %}
+       </tbody> 
+    </table>
+ </div>
+    {% include "includes/paginator.html" %}
+  
+
+{% endblock %}

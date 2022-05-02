@@ -1,0 +1,38 @@
+﻿{% extends "base.html" %}
+{% block title %}Cоревнования {{cup.name}}{% endblock %}
+{% block content %}
+<div class="container">
+  <article class="col-md-12 col-md-6">
+    <div class="card">
+      <h3 class="card-header">{{ cup.name }}</h3>
+      <div class="card-body">
+        <p>
+          {{ cup.description }}
+        </p>
+      </div>
+    </div>
+  </article>
+</div>
+
+  <div class="container">
+    <br>
+    <h6><b>Все связанные мероприятия:</b></h6>
+    <table class="table table-bordered table-sm" >
+        <thead style="background: rgba(229, 232, 232, 0.864)"> 
+          <tr>
+            <th scope="col" >Дата</th> 
+            <th scope="col" > Название гонки </th>
+          </tr>
+        </thead>
+  
+        <tbody>     
+          {% for race in races %}  
+          <tr>
+              <td scope="row" >{{ race.date|date:"d.m.Y" }}</td>
+              <td> <a href="{% url 'race_info' slug=race.slug %}"> {{ race.name }} </a> </td>
+          </tr>        
+          {% endfor %}
+         </tbody> 
+      </table>
+  </div>
+{% endblock %}

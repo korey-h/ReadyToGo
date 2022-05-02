@@ -4,9 +4,9 @@ from .models import Categories, Cups, Participants, Races
 
 class RacesAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'slug', 'date', 'cup', 'town',
-                    'numbers_amount', 'description')
-    search_fields = ('name', 'date', 'cup', 'town')
-    list_filter = ('name', 'date', 'cup', 'town')
+                    'numbers_amount', 'is_active', 'description')
+    search_fields = ('name', 'date', 'cup', 'town', 'is_active')
+    list_filter = ('name', 'date', 'cup', 'town', 'is_active')
     empty_value_display = '-пусто-'
 
 

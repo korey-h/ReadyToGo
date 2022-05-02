@@ -1,10 +1,19 @@
 ﻿{% extends "base.html" %}
 {% block title %}Все соревнования{% endblock %}
 {% block content %}
-<div class="container"></div> 
-  <p><h1>{{ race.name }}</h1></p> 
-  <p>{{ race.description }}</p>
+<div class="container">
+  <article class="col-md-12 col-md-6">
+    <div class="card">
+      <h3 class="card-header">{{ race.name }}</h3>
+      <p> </p>
+      <p><a class="btn btn-primary" href="{% url 'race_participants' slug=race.slug %}" role="button">Участники</a></p>
+      <div class="card-body">
+        <p>
+          {{ race.description }}
+        </p>
+      </div>
+    </div>
+  </article>
+</div>
 
-
-</div>  
 {% endblock %}
