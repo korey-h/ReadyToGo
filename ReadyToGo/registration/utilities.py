@@ -1,3 +1,6 @@
+import re
+
+
 class NumbersChecker():
     # принимает список занятых диапазонов вида [(1,10), (31,31), (33, 50)],
     # общее количество номеров (например, 100) и значение начального номера
@@ -65,3 +68,10 @@ class NumbersChecker():
             if num in range(verges[0], verges[1] + 1):
                 return True
         return False
+
+
+def find_slug(url, prefix, postfix):
+    """Извлекает slug из url по известным границам prefix, postfix"""
+    pattern = f'{prefix}.+{postfix}'
+    slug = re.search(pattern, url).group()
+    return slug.lstrip(prefix).rstrip(postfix)

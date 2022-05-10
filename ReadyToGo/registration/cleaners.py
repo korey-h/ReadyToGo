@@ -32,3 +32,13 @@ def num_clean(self):
             f"категории {self.category}. "
             f"{NumbersChecker.str_free(free_nums)}"
         )
+
+
+def category_clean(self, model):
+    if not model.objects.filter(
+            id=self.race.id,
+            race_categories=self.category).exists():
+        raise ValidationError(
+            f"выбранная категория не назначена для"
+            f" {self.race.name} {self.race.cup.name}"
+        )

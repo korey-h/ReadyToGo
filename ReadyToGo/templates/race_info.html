@@ -6,7 +6,11 @@
     <div class="card">
       <h3 class="card-header">{{ race.name }}</h3>
       <p> </p>
-      <p><a class="btn btn-primary" href="{% url 'race_participants' slug=race.slug %}" role="button">Участники</a></p>
+      <p><a class="btn btn-info" href="{% url 'race_participants' slug=race.slug %}" role="button">Участники</a>
+        {% if race.is_active %}
+          <a class="btn btn-primary" href="{% url 'race_registration' slug=race.slug %}" role="button">Зарегистрироваться</a>
+        {% endif %}    
+      </p>
       <div class="card-body">
         <p>
           {{ race.description }}

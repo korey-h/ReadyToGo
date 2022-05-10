@@ -121,18 +121,20 @@ class Participants(models.Model):
         verbose_name="Стартовый номер")
     club = models.CharField(verbose_name="Принадлежность к клубу",
                             max_length=50,
-                            blank=True, null=True,)
+                            blank=True)
     town = models.CharField(verbose_name="Из какого города?",
                             max_length=50,
-                            blank=True, null=True,)
+                            blank=True)
 
     class Meta:
         unique_together = ('race', 'name', 'surname', 'patronymic')
 
     def clean(self):
+        cleaners.category_clean(self, Races)
         person = None
         if self.id:
             person = Participants.objects.get(id=self.id)
         if not person or (person.category != self.category or
                           person.number != self.number):
             cleaners.num_clean(self)
+        super(Participants, self).clean()
