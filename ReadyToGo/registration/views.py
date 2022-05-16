@@ -1,10 +1,10 @@
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, render
+from django.urls import reverse
 from django.views.generic.edit import CreateView
 
 from .forms import RegForm
 from .models import Cups, Races
-from .utilities import find_slug
 
 
 def index(request):
@@ -33,16 +33,15 @@ def cup_info(request, slug):
 
 
 class RegView(CreateView):
+    model = Races
     form_class = RegForm
     template_name = 'reg_form.html'
 
     def get_context_data(self, **kwargs):
-        slug = find_slug(self.request.path, 'race/', '/registration')
-        obj = get_object_or_404(Races, slug=slug)
-        kwargs.update({'obj': obj})
+        obj = self.get_object()
         self.initial.update({'race': obj})
         return super().get_context_data(**kwargs)
 
-    def get_form(self, **kwargs):
-        form = super().get_form(**kwargs)
-        return form
+    def get_success_url(self):
+        slug = self.kwargs['slug']
+        return reverse('race_participants', kwargs={'slug': slug})

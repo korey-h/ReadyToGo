@@ -42,3 +42,16 @@ def category_clean(self, model):
             f"выбранная категория не назначена для"
             f" {self.race.name} {self.race.cup.name}"
         )
+
+
+def unique_person_clean(self):
+    if self.race.race_participants.filter(
+            name=self.name,
+            surname=self.surname,
+            patronymic=self.patronymic
+            ).exists():
+        raise ValidationError(
+            f"Участник <{self.name} {self.surname} {self.patronymic}>\n"
+            f"уже подал заявку на {self.race.name}, {self.race.cup.name}.\n"
+            f"Введите другие Ф.И.О либо перейдите к редактированию заявки."
+        )

@@ -1,11 +1,12 @@
 <div class="container">
   <article class="col-md-12 col-md-6">
-      <div class="card">
-        <h4 class="card-header">Форма регистрации на {{ obj.name }} {{ obj.cup.name }}</h4>  
-      </div>
+    <div class="card">
+      <h4 class="card-header">Форма регистрации на {{ view.get_object.name }}, {{ view.get_object.cup.name }}</h4>  
+    </div>
   </article>
 </div>
 <form method="post" action="{{ request.path }}">
-    {{ form.as_p }}
-    <input type="submit" value="Отправить">
-  </form> 
+  {% csrf_token %}
+  {{ form.as_p }}
+  <input type="submit" value="Отправить">
+</form> 

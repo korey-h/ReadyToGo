@@ -130,7 +130,9 @@ class Participants(models.Model):
         unique_together = ('race', 'name', 'surname', 'patronymic')
 
     def clean(self):
+
         cleaners.category_clean(self, Races)
+        cleaners.unique_person_clean(self)
         person = None
         if self.id:
             person = Participants.objects.get(id=self.id)
