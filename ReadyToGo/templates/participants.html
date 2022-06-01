@@ -2,7 +2,7 @@
 {% block title %}Участники. {{ race.name }}. {% endblock %}
 {% block content %}
 <div class="container">
-  <article class="col-md-12 col-md-6">
+  <article class="col-md-12 col-md-7">
       <div class="card">
         <h4 class="card-header">{{ race.name }}. Список участников</h4>  
       </div>
@@ -18,12 +18,13 @@
           <th scope="col" > Стартовый номер </th>
           <th scope="col" > Клуб </th>
           <th scope="col" > Город </th>
+          <th scope="col" ></th>
         </tr>
       </thead>
 
       <tbody>
       {%for category in race.race_categories.all%}
-        <td colspan="6" style="background: rgb(240, 248, 255) " class="fw-bold">{{category.name}}</td>             
+        <td colspan="7" style="background: rgb(240, 248, 255) " class="fw-bold">{{category.name}}</td>             
         {% for member in participants %} 
           {% if member.category == category %}  
             <tr>
@@ -33,6 +34,11 @@
                 <td> {{ member.number }} </td>
                 <td> {{ member.club }} </td>
                 <td> {{ member.Town }} </td>
+                <th> 
+                  <form action="{% url 'delete_participant' member.race.slug member.id %}" method="get">
+                    <button>Удалить</button>
+                  </form>
+                </th>
             </tr> 
           {% endif %}
         {% endfor %}

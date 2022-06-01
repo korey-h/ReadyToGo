@@ -1,10 +1,10 @@
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, DeleteView
 
 from .forms import RegForm
-from .models import Cups, Races
+from .models import Cups, Participants, Races
 
 
 def index(request):
@@ -41,6 +41,16 @@ class RegView(CreateView):
         obj = self.get_object()
         self.initial.update({'race': obj})
         return super().get_context_data(**kwargs)
+
+    def get_success_url(self):
+        slug = self.kwargs['slug']
+        return reverse('race_participants', kwargs={'slug': slug})
+
+
+class DelRegView(DeleteView):
+    model = Participants
+    slug_field = None
+    template_name_suffix = '_confirm_delete'
 
     def get_success_url(self):
         slug = self.kwargs['slug']
