@@ -33,7 +33,7 @@ class NumbersChecker():
             left_verge = verges[0]
             right_verge = verges[1]
             for i in range(point, nums_amount):
-                counter = i
+                point = i
                 if booked_nums[i] < left_verge:
                     continue
                 elif booked_nums[i] == left_verge:
@@ -43,7 +43,7 @@ class NumbersChecker():
                     break
                 free_nums.append((left_verge, booked_nums[i] - 1),)
                 left_verge = booked_nums[i] + 1
-            point = counter
+            
             if left_verge <= right_verge:
                 free_nums.append((left_verge, right_verge),)
         return free_nums

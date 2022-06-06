@@ -40,6 +40,7 @@ class RegView(CreateView):
     def get_context_data(self, **kwargs):
         obj = self.get_object()
         self.initial.update({'race': obj})
+        kwargs.update({'race': obj})
         return super().get_context_data(**kwargs)
 
     def get_success_url(self):
@@ -50,7 +51,7 @@ class RegView(CreateView):
 class DelRegView(DeleteView):
     model = Participants
     slug_field = None
-    template_name_suffix = '_confirm_delete'
+    template_name = None
 
     def get_success_url(self):
         slug = self.kwargs['slug']

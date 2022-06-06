@@ -1,12 +1,18 @@
-<div class="container">
-  <article class="col-md-12 col-md-6">
-    <div class="card">
-      <h4 class="card-header">Форма регистрации на {{ view.get_object.name }}, {{ view.get_object.cup.name }}</h4>  
-    </div>
-  </article>
-</div>
-<form method="post" action="{{ request.path }}">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <input type="submit" value="Отправить">
-</form> 
+{% extends "base.html" %}
+{% block title %}Регистрация. {{ race.name }}. {% endblock %}
+{% block content %}
+  <div class="container">
+    <article class="col-md-12 col-md-6">
+      <div class="card">
+        <h4 class="card-header">Форма регистрации на {{ race.name }}, {{ race.cup.name }}</h4>
+        <a class="card-header" href="{% url 'race_info' race.slug %}">вернуться к обзору {{ race.name }}</a>
+      </div>
+    </article>
+  </div>
+  <form method="post" action="{{ request.path }}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit"  class="btn-check" name="options-outlined" id="danger-outlined" autocomplete="off">
+    <label class="btn btn-outline-primary" for="danger-outlined">Отправить</label>
+  </form>
+{% endblock %}

@@ -121,10 +121,10 @@ class Participants(models.Model):
         verbose_name="Стартовый номер")
     club = models.CharField(verbose_name="Принадлежность к клубу",
                             max_length=50,
-                            blank=True)
+                            blank=True, default='-')
     town = models.CharField(verbose_name="Из какого города?",
                             max_length=50,
-                            blank=True)
+                            blank=True, default='-')
 
     class Meta:
         unique_together = ('race', 'name', 'surname', 'patronymic')

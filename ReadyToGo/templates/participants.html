@@ -2,9 +2,10 @@
 {% block title %}Участники. {{ race.name }}. {% endblock %}
 {% block content %}
 <div class="container">
-  <article class="col-md-12 col-md-7">
+  <article class="col-md-12 col-md-7">    
       <div class="card">
-        <h4 class="card-header">{{ race.name }}. Список участников</h4>  
+        <h5 class="card-header">{{ race.name }}. Список участников</h5>
+        <a class="card-header" href="{% url 'race_info' race.slug %}">вернуться к обзору {{ race.name }}</a>
       </div>
   </article>
 </div>
@@ -24,29 +25,82 @@
 
       <tbody>
       {%for category in race.race_categories.all%}
-        <td colspan="7" style="background: rgb(240, 248, 255) " class="fw-bold">{{category.name}}</td>             
-        {% for member in participants %} 
-          {% if member.category == category %}  
-            <tr>
-                <td scope="row" >{{ forloop.counter }}</td>
-                <td> {{ member.name }} {{ member.surname }}</td>
-                <td> {{ member.year }} </td>
-                <td> {{ member.number }} </td>
-                <td> {{ member.club }} </td>
-                <td> {{ member.Town }} </td>
-                <th> 
-                  <form action="{% url 'delete_participant' member.race.slug member.id %}" method="get">
-                    <button>Удалить</button>
-                  </form>
-                </th>
-            </tr> 
-          {% endif %}
-        {% endfor %}
-       {% endfor %}
-       </tbody> 
+        {% if category.category_participants.all.exists %}
+          <td colspan="7" style="background: rgb(240, 248, 255) " class="fw-bold">{{category.name}}</td>             
+          {% for member in participants %} 
+            {% if member.category == category %}  
+              <tr>
+                  <td scope="row" >{{ forloop.counter }}</td>
+                  <td> {{ member.name }} {{ member.surname }}</td>
+                  <td> {{ member.year }} </td>
+                  <td> {{ member.number }} </td>
+                  <td> {{ member.club }} </td>
+                  <td> {{ member.Town }} </td>
+                  <th> 
+                    <!-- Кнопка-триггер модального окна -->
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#delConfModal" 
+                      data-bs-action="{% url 'delete_participant' member.race.slug member.id%}"
+                      data-bs-number="{{ member.number}}" data-bs-name="{{ member.name}}" data-bs-surname="{{member.surname}}">
+                      Удалить 
+                    </button>
+                  </th>
+              </tr> 
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+      {% endfor %}
+      </tbody> 
     </table>
  </div>
-    {% include "includes/paginator.html" %}
+ <!-- Шаблон окна подтверждения -->
+ <div class="modal fade" id="delConfModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Удаление участника</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+      </div>
+      
+      <div class="modal-body">  
+        Удалить участника: ?
+      </div>
+    
+      <div class="modal-footer">
+      <form action="#" method="POST">{% csrf_token %}
+        <div>  
+          <input type="submit" class="btn-check" name="options-outlined" id="danger-outlined" autocomplete="off">
+          <label class="btn btn-outline-danger" for="danger-outlined">ДА</label>
+          <a href="{% url 'race_participants' race.slug %}" class="btn btn-outline-primary" for="btn-check-outlined">Нет</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- Подстановка параметров в окно подтверждения-->
+<script>
+  var exampleModal = document.getElementById('delConfModal')
+  exampleModal.addEventListener('show.bs.modal', function (event) {
+    var button = event.relatedTarget
+
+    var action = button.getAttribute('data-bs-action')
+    var number = button.getAttribute('data-bs-number')
+    var name = button.getAttribute('data-bs-name')
+    var surname = button.getAttribute('data-bs-surname')
+
+    var modalBody = exampleModal.querySelector('.modal-body')
+    var modalFooterForm = exampleModal.querySelector('.modal-footer form')
+  
+    modalBody.textContent = 'Удалить участника № ' + number + ' ' + name + ' ' + surname + '?'
+    modalFooterForm.action = action
+  })
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</body>
+
+{% include "includes/paginator.html" %}
   
 
 {% endblock %}
