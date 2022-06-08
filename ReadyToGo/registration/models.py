@@ -130,13 +130,15 @@ class Participants(models.Model):
         unique_together = ('race', 'name', 'surname', 'patronymic')
 
     def clean(self):
-
         cleaners.category_clean(self, Races)
-        cleaners.unique_person_clean(self)
         person = None
         if self.id:
             person = Participants.objects.get(id=self.id)
-        if not person or (person.category != self.category or
-                          person.number != self.number):
+        if person is None or (person.category != self.category or
+                              person.number != self.number):
             cleaners.num_clean(self)
+        if person is None or (person.name != self.name and
+                              person.surname != self.surname and
+                              person.patronymic != self.patronymic):
+            cleaners.unique_person_clean(self)
         super(Participants, self).clean()

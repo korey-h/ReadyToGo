@@ -31,6 +31,11 @@ class ParticipantsAdmin(admin.ModelAdmin):
                      'town', 'number',)
     list_filter = ('category__name', 'race__name', 'club', 'town')
 
+    def formfield_for_dbfield(self, db_field, **kwargs):
+        if db_field.name == 'category':
+            print('>>>> formfield_for_db_field', kwargs)
+        return super().formfield_for_dbfield(db_field, **kwargs)
+
 
 admin.site.register(Races, RacesAdmin)
 admin.site.register(Cups, CupsAdmin)

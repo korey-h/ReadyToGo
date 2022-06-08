@@ -6,14 +6,14 @@ from StartLine.settings import START_NUM
 from .utilities import NumbersChecker
 
 
-def num_clean(self):
-    verges = (self.category.number_start, self.category.number_end)
-    num_amount = self.race.numbers_amount
+def num_clean(participant):
+    verges = (participant.category.number_start, participant.category.number_end)
+    num_amount = participant.race.numbers_amount
     nums_booked = list(
-        self.race.race_participants.values_list('number', flat=True)
+        participant.race.race_participants.values_list('number', flat=True)
     )
     ranges_booked = list(
-        self.race.race_categories.exclude(
+        participant.race.race_categories.exclude(
             Q(number_start=None) | Q(number_end=None)
         ).values_list('number_start', 'number_end')
     )
@@ -26,32 +26,36 @@ def num_clean(self):
 
     free_nums = NumbersChecker.range_free_nums(free_ranges,
                                                nums_booked)
-    if not NumbersChecker.chek_free(self.number, free_nums):
+    if not NumbersChecker.chek_free(participant.number, free_nums):
         raise ValidationError(
-            f"номер {self.number} не доступен для "
-            f"категории {self.category}. "
+            f"номер {participant.number} не доступен для "
+            f"категории {participant.category}. "
             f"{NumbersChecker.str_free(free_nums)}"
         )
 
 
-def category_clean(self, model):
+def category_clean(participant, model):
+    """проверка необходима при создании participant
+    через админку django, где для выбора предлагаются
+    категории со всех гонок"""
+    
     if not model.objects.filter(
-            id=self.race.id,
-            race_categories=self.category).exists():
+            id=participant.race.id,
+            race_categories=participant.category).exists():
         raise ValidationError(
             f"выбранная категория не назначена для"
-            f" {self.race.name} {self.race.cup.name}"
+            f" {participant.race.name} {participant.race.cup.name}"
         )
 
 
-def unique_person_clean(self):
-    if self.race.race_participants.filter(
-            name=self.name,
-            surname=self.surname,
-            patronymic=self.patronymic
+def unique_person_clean(participant):
+    if participant.race.race_participants.filter(
+            name=participant.name,
+            surname=participant.surname,
+            patronymic=participant.patronymic
             ).exists():
         raise ValidationError(
-            f"Участник <{self.name} {self.surname} {self.patronymic}>\n"
-            f"уже подал заявку на {self.race.name}, {self.race.cup.name}.\n"
+            f"Участник <{participant.name} {participant.surname} {participant.patronymic}>\n"
+            f"уже подал заявку на {participant.race.name}, {participant.race.cup.name}.\n"
             f"Введите другие Ф.И.О либо перейдите к редактированию заявки."
         )

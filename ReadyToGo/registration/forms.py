@@ -16,7 +16,12 @@ class RegForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        race = self.initial['race']
+        participant = kwargs['instance']
+        if participant is None:
+            race = self.initial['race']
+        else:
+            race = participant.race
+        self.instance.race = race
         queryset = self.fields['category'].queryset.filter(race=race)
         self.fields['category'].queryset = queryset
-        self.instance.race = race
+  

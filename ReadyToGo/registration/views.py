@@ -1,7 +1,7 @@
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
-from django.views.generic.edit import CreateView, DeleteView
+from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
 from .forms import RegForm
 from .models import Cups, Participants, Races
@@ -33,14 +33,14 @@ def cup_info(request, slug):
 
 
 class RegView(CreateView):
-    model = Races
     form_class = RegForm
     template_name = 'reg_form.html'
 
     def get_context_data(self, **kwargs):
-        obj = self.get_object()
-        self.initial.update({'race': obj})
-        kwargs.update({'race': obj})
+        slug = self.kwargs.get('slug')
+        race = Races.objects.get(slug=slug)
+        self.initial.update({'race': race})
+        kwargs.update({'race': race})
         return super().get_context_data(**kwargs)
 
     def get_success_url(self):
@@ -56,3 +56,21 @@ class DelRegView(DeleteView):
     def get_success_url(self):
         slug = self.kwargs['slug']
         return reverse('race_participants', kwargs={'slug': slug})
+
+
+class UpdRegView(UpdateView):
+    model = Participants
+    slug_field = None
+    form_class = RegForm
+    template_name = 'reg_form.html'
+
+    def get_success_url(self):
+        slug = self.kwargs['slug']
+        return reverse('race_participants', kwargs={'slug': slug})
+
+    def get_context_data(self, **kwargs):
+        slug = self.kwargs.get('slug')
+        race = Races.objects.get(slug=slug)
+        self.initial.update({'race': race})
+        kwargs.update({'race': race})
+        return super().get_context_data(**kwargs)
