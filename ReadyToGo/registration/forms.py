@@ -1,9 +1,20 @@
+from datetime import datetime
+
 from django import forms
 from django.contrib.auth import get_user_model
 
 from .models import Participants
 
 User = get_user_model()
+
+
+class CategoryChoiceField(forms.ModelChoiceField):
+
+    def label_from_instance(self, obj):
+        name = obj.name
+        race = obj.race.name
+        date = datetime.strftime(obj.race.date, '%m.%Y')
+        return '_'.join((name, race, date))
 
 
 class RegForm(forms.ModelForm):
@@ -24,4 +35,3 @@ class RegForm(forms.ModelForm):
         self.instance.race = race
         queryset = self.fields['category'].queryset.filter(race=race)
         self.fields['category'].queryset = queryset
-  

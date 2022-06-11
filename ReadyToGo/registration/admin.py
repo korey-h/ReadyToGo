@@ -1,4 +1,6 @@
 from django.contrib import admin
+
+from .forms import CategoryChoiceField
 from .models import Categories, Cups, Participants, Races
 
 
@@ -31,10 +33,15 @@ class ParticipantsAdmin(admin.ModelAdmin):
                      'town', 'number',)
     list_filter = ('category__name', 'race__name', 'club', 'town')
 
-    def formfield_for_dbfield(self, db_field, **kwargs):
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == 'category':
-            print('>>>> formfield_for_db_field', kwargs)
-        return super().formfield_for_dbfield(db_field, **kwargs)
+            queryset = Categories.objects.filter(race__is_active=True)
+            kwargs.update({'queryset': queryset})
+            kwargs.update({'form_class': CategoryChoiceField})
+
+        if db_field.name == 'race':
+            queryset = Races.objects.filter(is_active=True)
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
 admin.site.register(Races, RacesAdmin)

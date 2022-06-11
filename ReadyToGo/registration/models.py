@@ -103,7 +103,7 @@ class Participants(models.Model):
                             Categories,
                             on_delete=models.CASCADE,
                             related_name='category_participants',
-                            verbose_name='Категория участника',
+                            verbose_name='Категория участника',                        
                              )
     name = models.CharField(verbose_name="Имя", max_length=30)
     surname = models.CharField(verbose_name="Фамилия", max_length=30)
