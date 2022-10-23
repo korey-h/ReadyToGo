@@ -1,17 +1,11 @@
 {% extends "base.html" %}
-
-{% block title %}
-  {% with race=form.initial.race %}
-  Регистрация. {{ race.name }}.
-  {% endwith %}
-{% endblock %}
+{% block title %}Редактирование заявки на {{ race.name }}. {% endblock %}
 {% block content %}
-  {% with race=form.initial.race %}
   <div class="container">
     <article class="col-md-12 col-md-6">
       <div class="card">
-        <h4 class="card-header">Форма регистрации на {{ race.name }}, {{ race.cup.name }}</h4>
         <a class="card-header" href="{% url 'race_info' race.slug %}">вернуться к обзору {{ race.name }}</a>
+        <h6 class="card-header">Для редактирования заявки на {{ race.name }}, {{ race.cup.name }} введите ниже код, полученный при регистрации.</h6>
       </div>
     </article>
   </div>
@@ -21,5 +15,4 @@
     <input type="submit"  class="btn-check" name="options-outlined" id="danger-outlined" autocomplete="off">
     <label class="btn btn-outline-primary" for="danger-outlined">Отправить</label>
   </form>
-  {% endwith %}
 {% endblock %}

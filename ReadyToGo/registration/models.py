@@ -125,6 +125,8 @@ class Participants(models.Model):
     town = models.CharField(verbose_name="Из какого города?",
                             max_length=50,
                             blank=True, default='-')
+    reg_code = models.CharField(verbose_name="Код регистрации",
+                                max_length=50, blank=False)
 
     class Meta:
         unique_together = ('race', 'name', 'surname', 'patronymic')

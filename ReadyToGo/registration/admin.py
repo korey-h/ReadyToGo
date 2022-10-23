@@ -28,7 +28,7 @@ class CategoriesAdmin(admin.ModelAdmin):
 class ParticipantsAdmin(admin.ModelAdmin):
 
     list_display = ('race', 'category', 'name', 'surname', 'patronymic',
-                    'year', 'number', 'club', 'town')
+                    'year', 'number', 'club', 'town', 'reg_code')
     search_fields = ('name', 'surname', 'category__name', 'race__name', 'club',
                      'town', 'number',)
     list_filter = ('category__name', 'race__name', 'club', 'town')
@@ -41,6 +41,7 @@ class ParticipantsAdmin(admin.ModelAdmin):
 
         if db_field.name == 'race':
             queryset = Races.objects.filter(is_active=True)
+            kwargs.update({'queryset': queryset})
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 

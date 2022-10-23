@@ -22,7 +22,8 @@ class RegForm(forms.ModelForm):
     class Meta():
         model = Participants
         fields = '__all__'
-        exclude = ['race']
+        exclude = ['reg_code']
+        widgets = {'race': forms.HiddenInput()}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -35,3 +36,9 @@ class RegForm(forms.ModelForm):
         self.instance.race = race
         queryset = self.fields['category'].queryset.filter(race=race)
         self.fields['category'].queryset = queryset
+
+
+class RegEditForm(forms.Form):
+
+    reg_code = forms.CharField(label="Код регистрации",
+                               max_length=50, required=True)

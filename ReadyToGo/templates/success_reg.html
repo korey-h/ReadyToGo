@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Редактирование заявки на {{ race.name }}. {% endblock %}
+{% block content %}
+  <div class="container">
+    <article class="col-md-12 col-md-6">
+      <div class="card">
+        <a class="card-header" href="{% url 'race_info' race.slug %}">вернуться к обзору {{ race.name }}</a>
+        <h6 class="card-header">Вы зарегистрировались на {{ race.name }}, {{ race.cup.name }} в категории {{participant.category.name}}
+            под номером {{participant.number}}.
+            <p>Для редактирования заявки используйте код <b>{{participant.reg_code}}</b>
+            <p> на странице <a class="card-header" href="{% url 'edit_reg_info' race.slug %}">Редактирование заявки </a>
+        </h6>
+      </div>
+    </article>
+  </div>
+  
+{% endblock %}

@@ -1,3 +1,5 @@
+import base64
+import hashlib
 import re
 
 
@@ -43,7 +45,7 @@ class NumbersChecker():
                     break
                 free_nums.append((left_verge, booked_nums[i] - 1),)
                 left_verge = booked_nums[i] + 1
-            
+
             if left_verge <= right_verge:
                 free_nums.append((left_verge, right_verge),)
         return free_nums
@@ -75,3 +77,10 @@ def find_slug(url, prefix, postfix):
     pattern = f'{prefix}.+{postfix}'
     slug = re.search(pattern, url).group()
     return slug.lstrip(prefix).rstrip(postfix)
+
+
+def get_reg_code(data):
+    '''создает код доступа для участника на основе его рег. данных'''
+    to_hash = data.encode()
+    hs = hashlib.md5(to_hash).digest()
+    return base64.urlsafe_b64encode(hs).decode('ascii').replace('=', '')
