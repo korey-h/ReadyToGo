@@ -1,23 +1,6 @@
 ﻿{% extends "base.html" %}
 {% block title %}Все соревнования{% endblock %}
 {% block content %}
-<!-- <div class="container"> 
-    <div class="row" style="background: rgb(158, 215, 225); font-weight: bold;">
-        <div class="col-1" >Дата</div> 
-        <div class="col-2" > Название гонки </div>
-        <div class="col-2" > Группа гонок </div> 
-        <div class="col-2" > Место проведения </div> 
-    </div> 
-   
-    {% for race in page %}  
-      <div class="row ">
-        <div class="col-1" >{{ race.date|date:"d.m.y" }}</div> 
-        <div class="col-2" > <a href="{% url 'race_info' slug=race.slug %}">{{ race.name }}</a> </div>
-        <div class="col-2" > {{ race.cup }} </div> 
-        <div class="col-2" > {{ race.town }} </div> 
-      </div>        
-    {% endfor %}
-</div>   -->
 <div class="container"> 
     <table class="table table-bordered table-sm" >
       <thead style="background: rgb(158, 215, 225)"> 

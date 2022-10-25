@@ -8,6 +8,7 @@ class NumbersChecker():
     # общее количество номеров (например, 100) и значение начального номера
     # возвращает список своводных диапазонов в виде
     #  [(11,30), (32,32), (51, 100)]
+    @staticmethod
     def get_free_ranges(booked, num_amount, start=1):
         if not booked:
             return [(start, num_amount)]
@@ -26,6 +27,7 @@ class NumbersChecker():
     # и список зарезервированных номеров (1,11,32,33,55)
     # возвращает список с диапазонами свобоных номеров вида
     # [(12,30), (51,54), (56, 100)]
+    @staticmethod
     def range_free_nums(free_ranges, booked_nums):
         booked_nums.sort()
         nums_amount = len(booked_nums)
@@ -52,6 +54,7 @@ class NumbersChecker():
 
     # форматирует список диапазонов вида [(11,30), (32,32), (51, 100)]
     # в строку вида '11-30, 32, 51-100'
+    @staticmethod
     def str_free(free_nums):
         if not free_nums:
             return 'Все стартовые номера заняты.'
@@ -65,6 +68,7 @@ class NumbersChecker():
 
     # проверяет наличие номера в списке диапазонов вида
     # [(11,30), (32,32), (51, 100)]
+    @staticmethod
     def chek_free(num, free_nums):
         for verges in free_nums:
             if num in range(verges[0], verges[1] + 1):

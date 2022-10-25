@@ -2,6 +2,7 @@ from datetime import datetime
 
 from django import forms
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 
 from .models import Participants
 
@@ -39,6 +40,13 @@ class RegForm(forms.ModelForm):
 
 
 class RegEditForm(forms.Form):
+    @staticmethod
+    def existence_chek(value):
+        model = Participants
+        if not model.objects.filter(reg_code=value):
+            raise ValidationError(('Код %(value)s не существует.'),
+                                  params={'value': value},)
 
     reg_code = forms.CharField(label="Код регистрации",
-                               max_length=50, required=True)
+                               max_length=50, required=True,
+                               validators=[existence_chek])

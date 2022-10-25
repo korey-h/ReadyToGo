@@ -6,6 +6,7 @@
     <div class="card">
       <h3 class="card-header">{{ cup.name }}</h3>
       <div class="card-body">
+        <a class="btn btn-info" href="{% url 'cup_update' slug=cup.slug %}" role="button">Редактировать</a>
         <p>
           {{ cup.description }}
         </p>
