@@ -37,4 +37,9 @@ class DelCupView(DeleteView):
     template_name = None
 
     def get_success_url(self):
-        return reverse('/')
+        return reverse('index')
+
+    def get_object(self, *args, **kwargs):
+        slug = self.kwargs['slug']
+        return get_object_or_404(Cups, slug=slug)
+

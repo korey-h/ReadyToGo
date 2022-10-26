@@ -12,8 +12,9 @@ class Cups(models.Model):
     name = models.CharField(
         verbose_name="Название Кубка",
         max_length=200,
+        unique=True,
     )
-    slug = models.SlugField(max_length=70, default='autoslug', blank=True)
+    slug = models.SlugField(max_length=70, default='autoslug', unique=True,)
     description = models.TextField(max_length=150, blank=True, null=True,)
 
     def __str__(self):

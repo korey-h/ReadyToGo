@@ -76,7 +76,7 @@ class RegView(CreateView, UpdateView, ):
         slug = self.kwargs.get(self.slug_url_kwarg)
         url = reverse('race_registration', kwargs={'slug': slug})
         if self.request.path == url:
-            return
+            return None
 
         pk = self.kwargs.get(self.pk_url_kwarg)
         url = reverse('participant_selfupdate',

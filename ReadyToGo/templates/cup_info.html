@@ -7,6 +7,12 @@
       <h3 class="card-header">{{ cup.name }}</h3>
       <div class="card-body">
         <a class="btn btn-info" href="{% url 'cup_update' slug=cup.slug %}" role="button">Редактировать</a>
+
+        <!-- Кнопка-триггер модального окна -->
+        <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#delConfModal"> 
+          Удалить 
+        </button>
+
         <p>
           {{ cup.description }}
         </p>
@@ -36,4 +42,33 @@
          </tbody> 
       </table>
   </div>
+
+
+
+  <!-- Шаблон окна подтверждения -->
+ <div class="modal fade" id="delConfModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Удаление Кубка</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+      </div>
+      
+      <div class="modal-body">  
+        Удалить группу соревнований {{cup.name}} ?
+      </div>
+    
+      <div class="modal-footer">
+      <form action="{% url 'cup_delete' slug=cup.slug %}" method="POST">{% csrf_token %}
+        <div>  
+          <input type="submit" class="btn-check" name="options-outlined" id="danger-outlined" autocomplete="off">
+          <label class="btn btn-outline-danger" for="danger-outlined">ДА</label>
+          <a href="{% url 'cup_info' cup.slug %}" class="btn btn-outline-primary" for="btn-check-outlined">Нет</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+</div>
+
 {% endblock %}
