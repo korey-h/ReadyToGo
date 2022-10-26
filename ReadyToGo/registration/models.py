@@ -32,18 +32,19 @@ class Races(models.Model):
         max_length=200,
     )
     slug = models.SlugField(max_length=70, default='autoslug', blank=True)
-    date = models.DateField()
+    date = models.DateField(verbose_name="Дата проведения",)
     cup = models.ForeignKey(Cups,
                             on_delete=models.CASCADE,
                             related_name='cup_races',
                             verbose_name="Группа гонок",
                             blank=True, null=True,)
-    town = models.TextField(max_length=50)
+    town = models.CharField(verbose_name="Название города", max_length=50)
     numbers_amount = models.IntegerField(
+        verbose_name="Количество стартовых номеров",
         validators=[MinValueValidator(1, message='Количество не меньше 1')
                     ]
     )
-    description = models.TextField(max_length=150, blank=True, null=True)
+    description = models.TextField(verbose_name="Описание", max_length=350, blank=True, null=True)
     is_active = models.BooleanField(
         verbose_name="регистрация активна",
         default=True

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %} Создание соревнования{% endblock %}
+{% block content %}
+  <div class="container">
+    <article class="col-md-12 col-md-6">
+      <div class="card">
+        <h4 class="card-header">Создание соревнования.</h4>
+        <h6 class="card-header"> 
+            {%if form.slug.value == '' or form.slug.value == 'autoslug' %}
+              вернуться к обзору<a  href="{% url 'index' %}"> всех соревнований</a>
+            {%else %}
+              вернуться к описанию <a  href="{% url 'race_info' form.slug.value %}"> {{ form.name.value }}</a>
+            {%endif%}
+        </h6>
+      </div>
+    </article>
+  </div>
+  <p>
+  <form method="post" action="{{ request.path }}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit"  class="btn-check" name="options-outlined" id="danger-outlined" autocomplete="off">
+    <label class="btn btn-outline-primary" for="danger-outlined">Отправить</label>
+  </form>
+
+{% endblock %}

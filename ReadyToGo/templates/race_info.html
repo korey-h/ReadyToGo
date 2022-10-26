@@ -10,7 +10,13 @@
         {% if race.is_active %}
           <a class="btn btn-primary" href="{% url 'race_registration' slug=race.slug %}" role="button">Зарегистрироваться</a>
           <a class="btn btn-primary" href="{% url 'edit_reg_info' slug=race.slug %}" role="button">Редактировать заявку</a>
-        {% endif %}    
+        {% endif %}
+        <a class="btn btn-info" href="{% url 'race_update' slug=race.slug %}" role="button">Редактировать соревнование</a>
+
+        <!-- Кнопка-триггер модального окна -->
+        <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#delConfModal"> 
+          Удалить соревнование
+        </button>   
       </p>
       <div class="card-body">
         <p>
@@ -21,4 +27,27 @@
   </article>
 </div>
 
+<!-- Шаблон окна подтверждения -->
+<div class="modal fade" id="delConfModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Удаление соревнования</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+      </div>
+      
+      <div class="modal-body">  
+        Удалить соревнование "{{race.name}}" ?
+      </div>
+    
+      <div class="modal-footer">
+      <form action="{% url 'race_delete' slug=race.slug %}" method="POST">{% csrf_token %}
+        <div>  
+          <input type="submit" class="btn-check" name="options-outlined" id="danger-outlined" autocomplete="off">
+          <label class="btn btn-outline-danger" for="danger-outlined">ДА</label>
+          <a href="{% url 'race_info' race.slug %}" class="btn btn-outline-primary" for="btn-check-outlined">Нет</a>
+        </div>
+      </form>
+    </div>
+  </div>
 {% endblock %}

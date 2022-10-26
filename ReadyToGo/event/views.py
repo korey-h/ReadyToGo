@@ -1,9 +1,9 @@
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
-from registration.models import Cups
+from registration.models import Cups, Races
 
-from .forms import CupForm
+from .forms import CupForm, RaceForm
 
 
 def cup_info(request, slug):
@@ -42,4 +42,27 @@ class DelCupView(DeleteView):
     def get_object(self, *args, **kwargs):
         slug = self.kwargs['slug']
         return get_object_or_404(Cups, slug=slug)
+
+
+class RaceView(CreateView, UpdateView, ):
+    model = Races
+    form_class = RaceForm
+    template_name = 'race_create_form.html'
+
+    def get_success_url(self):
+        url = reverse('race_create')
+        if self.request.path == url:
+            return reverse('index')
+        slug = self.kwargs['slug']
+        return reverse('race_info', kwargs={'slug': slug})
+
+    def get_object(self, *args, **kwargs):
+        url = reverse('race_create')
+        if self.request.path == url:
+            return None
+        return super().get_object(*args, **kwargs)
+
+
+class DelRaceView(DelCupView):
+    model = Races
 
