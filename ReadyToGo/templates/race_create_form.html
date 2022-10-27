@@ -2,26 +2,125 @@
 
 {% block title %} Создание соревнования{% endblock %}
 {% block content %}
+  {% with race=form.instance  %}
   <div class="container">
     <article class="col-md-12 col-md-6">
       <div class="card">
-        <h4 class="card-header">Создание соревнования.</h4>
-        <h6 class="card-header"> 
-            {%if form.slug.value == '' or form.slug.value == 'autoslug' %}
-              вернуться к обзору<a  href="{% url 'index' %}"> всех соревнований</a>
-            {%else %}
-              вернуться к описанию <a  href="{% url 'race_info' form.slug.value %}"> {{ form.name.value }}</a>
-            {%endif%}
-        </h6>
+
+        {%if not race %}
+          <h4 class="card-header">Создание соревнования</h4>
+          <h6 class="card-header"> 
+            вернуться к обзору<a  href="{% url 'index' %}"> всех соревнований</a>
+          </h6>
+        {%else %}
+          <h4 class="card-header">Редактирование соревнования</h4>
+          <h6 class="card-header"> 
+            вернуться к описанию <a  href="{% url 'race_info' race.slug %}"> {{ race.name }}</a>
+          </h6>
+        {%endif%}
+        
       </div>
     </article>
   </div>
   <p>
-  <form method="post" action="{{ request.path }}">
+  {%if race %} 
+    <div class="container">          
+      <a class="btn btn-primary" href="{% url 'category_create' race_slug=race.slug %}" role="button">Добавить категорию</a>
+    </div>
+  <p>
+  
+    {% if race.race_categories.all.exists %} 
+      <div class="container"> 
+         <table class="table table-bordered table-sm" >
+           <thead style="background: rgb(158, 215, 225)"> 
+             <tr>
+               <th scope="col" >№ п/п</th> 
+               <th scope="col" > Категория </th>
+               <th scope="col" > Старший г.р. </th> 
+               <th scope="col" > Младший г.р. </th>
+               <th scope="col" > Стартовый номер от </th>
+               <th scope="col" > Стартовый номер до </th>
+               <th scope="col" ></th>
+             </tr>
+           </thead>  
+           <tbody>              
+             {% for category in race.race_categories.all %}      
+               <tr>
+                  <td scope="row" >{{ forloop.counter }}</td>
+                  <td> {{ category.name }} </td>
+                  <td> {{ category.year_old }} </td>
+                  <td> {{ category.year_yang }} </td>
+                  <td> {{ category.number_start }} </td>
+                  <td> {{ category.number_end }} </td>
+                  <th> 
+                    <!-- Кнопка-триггер модального окна -->
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#delConfModal" 
+                      data-bs-action="{% url 'category_delete' race.slug category.slug %}"
+                      data-bs-name="{{ category.name}}">
+                      Удалить 
+                    </button>
+                    <a href="{% url 'category_update' race.slug category.slug %}" class="btn btn-outline-primary">Редактировать</a>
+                  </th>
+               </tr>                       
+             {% endfor %}          
+    
+           </tbody> 
+         </table>
+      </div>
+    {% endif %}
+  {% endif %}
+
+  <form method="post" action="{{ request.path }}" >
     {% csrf_token %}
     {{ form.as_p }}
     <input type="submit"  class="btn-check" name="options-outlined" id="danger-outlined" autocomplete="off">
     <label class="btn btn-outline-primary" for="danger-outlined">Отправить</label>
   </form>
 
+  <!-- Шаблон окна подтверждения -->
+  <div class="modal fade" id="delConfModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Удаление категории</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+        </div>
+        
+        <div class="modal-body">  
+          Удалить категорию: ?
+        </div>
+      
+        <div class="modal-footer">
+          <form action="#" method="POST" >{% csrf_token %}
+            <div>  
+              <input type="submit" class="btn-check" name="options-outlined" id="conf_delete" autocomplete="off">
+              <label class="btn btn-outline-danger" for="conf_delete">ДА</label>
+              <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Нет</button>
+            </div>
+          </form>
+        </div>
+     </div>
+   </div>
+  </div>
+
+  <!-- Подстановка параметров в окно подтверждения-->
+  <script>
+    var exampleModal = document.getElementById('delConfModal')
+    exampleModal.addEventListener('show.bs.modal', function (event) {
+      var button = event.relatedTarget
+  
+      var action = button.getAttribute('data-bs-action')
+      var name = button.getAttribute('data-bs-name')
+  
+      var modalBody = exampleModal.querySelector('.modal-body')
+      var modalFooterForm = exampleModal.querySelector('.modal-footer form')
+    
+      modalBody.textContent = 'Удалить категорию ' + name + '?'
+      modalFooterForm.action = action
+    })
+  </script>
+  
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+  
+  {% endwith %}
 {% endblock %}

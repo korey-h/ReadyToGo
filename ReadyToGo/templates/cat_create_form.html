@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %} Создание категории{% endblock %}
+{% block content %}
+  {% with race=form.initial.race %}
+  <div class="container">
+    <article class="col-md-12 col-md-6">
+      <div class="card">
+        <h4 class="card-header">Создание категории.</h4>
+        <h6 class="card-header"> 
+            вернуться к редактированию <a  href="{% url 'race_update' race.slug %}"> {{ race.name }}</a>
+        </h6>
+      </div>
+    </article>
+  </div>
+  <p>
+  <form method="post" action="{{ request.path }}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit"  class="btn-check" name="options-outlined" id="danger-outlined" autocomplete="off">
+    <label class="btn btn-outline-primary" for="danger-outlined">Отправить</label>
+  </form>
+  {% endwith %}
+{% endblock %}

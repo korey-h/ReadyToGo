@@ -41,14 +41,16 @@ class Races(models.Model):
     town = models.CharField(verbose_name="Название города", max_length=50)
     numbers_amount = models.IntegerField(
         verbose_name="Количество стартовых номеров",
-        validators=[MinValueValidator(1, message='Количество не меньше 1')
-                    ]
-    )
-    description = models.TextField(verbose_name="Описание", max_length=350, blank=True, null=True)
+        validators=[MinValueValidator(1, message='Количество не меньше 1')]
+        )
+
+    description = models.TextField(
+        verbose_name="Описание", max_length=350,
+        blank=True, null=True)
     is_active = models.BooleanField(
         verbose_name="регистрация активна",
         default=True
-    )
+        )
 
     def __str__(self):
         return self.name
@@ -92,6 +94,9 @@ class Categories(models.Model):
         if self.slug == 'autoslug' or not self.slug:
             self.slug = slugify(self.name)
         super(Categories, self).save(*args, **kwargs)
+
+    class Meta:
+        unique_together = [['slug', 'race']]
 
 
 class Participants(models.Model):
