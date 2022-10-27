@@ -27,27 +27,26 @@
       {%for category in race.race_categories.all%}
         {% if category.category_participants.all.exists %}
           <td colspan="7" style="background: rgb(240, 248, 255) " class="fw-bold">{{category.name}}</td>             
-          {% for member in participants %} 
-            {% if member.category == category %}  
-              <tr>
-                  <td scope="row" >{{ forloop.counter }}</td>
-                  <td> {{ member.name }} {{ member.surname }}</td>
-                  <td> {{ member.year }} </td>
-                  <td> {{ member.number }} </td>
-                  <td> {{ member.club }} </td>
-                  <td> {{ member.town }} </td>
-                  <th> 
-                    <!-- Кнопка-триггер модального окна -->
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#delConfModal" 
-                      data-bs-action="{% url 'delete_participant' race.slug member.id%}"
-                      data-bs-number="{{ member.number}}" data-bs-name="{{ member.name}}" data-bs-surname="{{member.surname}}">
-                      Удалить 
-                    </button>
-                    <a href="{% url 'update_participant' race.slug member.id %}" class="btn btn-outline-primary" for="btn-check-outlined">Редактировать</a>
-                  </th>
-              </tr> 
-            {% endif %}
+          {% for member in category.category_participants.all %} 
+            <tr>
+                <td scope="row" >{{ forloop.counter }}</td>
+                <td> {{ member.name }} {{ member.surname }}</td>
+                <td> {{ member.year }} </td>
+                <td> {{ member.number }} </td>
+                <td> {{ member.club }} </td>
+                <td> {{ member.town }} </td>
+                <th> 
+                  <!-- Кнопка-триггер модального окна -->
+                  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#delConfModal" 
+                    data-bs-action="{% url 'delete_participant' race.slug member.id%}"
+                    data-bs-number="{{ member.number}}" data-bs-name="{{ member.name}}" data-bs-surname="{{member.surname}}">
+                    Удалить 
+                  </button>
+                  <a href="{% url 'update_participant' race.slug member.id %}" class="btn btn-outline-primary" for="btn-check-outlined">Редактировать</a>
+                </th>
+            </tr> 
           {% endfor %}
+           
         {% endif %}
       {% endfor %}
       </tbody> 
