@@ -3,6 +3,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    path("cup/all/", views.get_all_cups, name="all_cups"),
     path("cup/info/<slug:slug>/", views.cup_info, name="cup_info"),
     path("create/cup/", views.CupView.as_view(), name="cup_create"),
     path("cup/update/<slug:slug>/", views.CupView.as_view(),

@@ -2,12 +2,12 @@
 
 {% block title %} Создание соревнования{% endblock %}
 {% block content %}
-  {% with race=form.instance  %}
+  {% with race=form.instance %}
   <div class="container">
     <article class="col-md-12 col-md-6">
       <div class="card">
 
-        {%if not race %}
+        {%if not race.id %}
           <h4 class="card-header">Создание соревнования</h4>
           <h6 class="card-header"> 
             вернуться к обзору<a  href="{% url 'index' %}"> всех соревнований</a>
@@ -23,7 +23,7 @@
     </article>
   </div>
   <p>
-  {%if race %} 
+  {%if race.id %} 
     <div class="container">          
       <a class="btn btn-primary" href="{% url 'category_create' race_slug=race.slug %}" role="button">Добавить категорию</a>
     </div>
@@ -50,8 +50,8 @@
                   <td> {{ category.name }} </td>
                   <td> {{ category.year_old }} </td>
                   <td> {{ category.year_yang }} </td>
-                  <td> {{ category.number_start }} </td>
-                  <td> {{ category.number_end }} </td>
+                  <td> {{ category.number_start|default_if_none:"" }} </td>
+                  <td> {{ category.number_end|default_if_none:""}} </td>
                   <th> 
                     <!-- Кнопка-триггер модального окна -->
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#delConfModal" 

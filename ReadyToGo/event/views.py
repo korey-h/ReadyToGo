@@ -1,3 +1,4 @@
+from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
@@ -12,6 +13,14 @@ def cup_info(request, slug):
                   {'cup': cup, 'races': cup.cup_races.all()})
 
 
+def get_all_cups(request):
+    cups = Cups.objects.all()
+    paginator = Paginator(cups, 20)
+    page_number = request.GET.get('page')
+    page = paginator.get_page(page_number)
+    return render(request, 'cups_all.html', {'page': page})
+
+
 class CupView(CreateView, UpdateView, ):
     model = Cups
     form_class = CupForm
@@ -20,7 +29,7 @@ class CupView(CreateView, UpdateView, ):
     def get_success_url(self):
         url = reverse('cup_create')
         if self.request.path == url:
-            return reverse('index')
+            return reverse('all_cups')
         slug = self.kwargs['slug']
         return reverse('cup_info', kwargs={'slug': slug})
 
@@ -37,7 +46,7 @@ class DelCupView(DeleteView):
     template_name = None
 
     def get_success_url(self):
-        return reverse('index')
+        return reverse('all_cups')
 
     def get_object(self, *args, **kwargs):
         slug = self.kwargs['slug']

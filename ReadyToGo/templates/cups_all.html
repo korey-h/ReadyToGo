@@ -1,0 +1,28 @@
+﻿{% extends "base.html" %}
+{% block title %}Все группы соревнований{% endblock %}
+{% block content %}
+  <div class="container"> 
+    <table class="table table-bordered table-sm" >
+      <thead style="background: rgb(158, 215, 225)"> 
+        <tr>
+          <th scope="col" >N п/п</th> 
+          <th scope="col" > Название </th>
+          <th scope="col" > Описание </th> 
+        </tr>
+      </thead>
+
+      <tbody>     
+        {% for cup in page %}  
+        <tr>
+            <td scope="row" >{{ forloop.counter }}</td>
+            <td> <a href="{% url 'cup_info' slug=cup.slug %}"> {{ cup.name }} </a> </td>
+            <td> {{ cup.description|truncatewords:15 }} </td>
+        </tr>        
+        {% endfor %}
+       </tbody> 
+    </table>
+  </div>
+  {% include "includes/paginator.html" %}
+  
+
+{% endblock %}

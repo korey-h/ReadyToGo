@@ -8,7 +8,7 @@
         <h4 class="card-header">Создание группы, объединяющей несколько соревнований.</h4>
         <h6 class="card-header"> 
             {%if form.slug.value == '' or form.slug.value == 'autoslug' %}
-              вернуться к обзору<a  href="{% url 'index' %}"> всех соревнований</a>
+              вернуться к обзору<a  href="{% url 'all_cups' %}"> всех групп соревнований</a>
             {%else %}
               вернуться к описанию <a  href="{% url 'cup_info' form.slug.value %}"> {{ form.name.value }}</a>
             {%endif%}
