@@ -43,7 +43,8 @@
                <th scope="col" ></th>
              </tr>
            </thead>  
-           <tbody>              
+           <tbody>  
+             {% with amount=race.race_categories.all.count %}            
              {% for category in race.race_categories.all %}      
                <tr>
                   <td scope="row" >{{ forloop.counter }}</td>
@@ -54,16 +55,18 @@
                   <td> {{ category.number_end|default_if_none:""}} </td>
                   <th> 
                     <!-- Кнопка-триггер модального окна -->
+                    {% if amount > 1 %}
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#delConfModal" 
                       data-bs-action="{% url 'category_delete' race.slug category.slug %}"
                       data-bs-name="{{ category.name}}">
                       Удалить 
                     </button>
+                    {% endif %}
                     <a href="{% url 'category_update' race.slug category.slug %}" class="btn btn-outline-primary">Редактировать</a>
                   </th>
                </tr>                       
              {% endfor %}          
-    
+             {% endwith %} 
            </tbody> 
          </table>
       </div>

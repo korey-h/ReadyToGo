@@ -5,6 +5,7 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from registration.models import Categories, Cups, Races
 
 from .forms import CategoryForm, CupForm, RaceForm
+from .utilities import create_def_category
 
 
 def cup_info(request, slug):
@@ -42,15 +43,9 @@ class CupView(CreateView, UpdateView, ):
 
 class DelCupView(DeleteView):
     model = Cups
-    slug_field = None
-    template_name = None
 
     def get_success_url(self):
         return reverse('all_cups')
-
-    def get_object(self, *args, **kwargs):
-        slug = self.kwargs['slug']
-        return get_object_or_404(Cups, slug=slug)
 
 
 class RaceView(CreateView, UpdateView, ):
@@ -71,9 +66,17 @@ class RaceView(CreateView, UpdateView, ):
             return None
         return super().get_object(*args, **kwargs)
 
+    def form_valid(self, form):
+        result = super().form_valid(form)
+        create_def_category(self.object, CategoryForm)
+        return result
 
-class DelRaceView(DelCupView):
+
+class DelRaceView(DeleteView):
     model = Races
+
+    def get_success_url(self):
+        return reverse('index')
 
 
 class CategoryView(CreateView, UpdateView, ):
@@ -89,9 +92,6 @@ class CategoryView(CreateView, UpdateView, ):
 
     def get_success_url(self):
         slug = self.kwargs['race_slug']
-        # url = reverse('category_create', kwargs={'race_slug': slug})
-        # if self.request.path == url:
-        #     return reverse('index')
         return reverse('race_update', kwargs={'slug': slug})
 
     def get_object(self, *args, **kwargs):
@@ -108,9 +108,9 @@ class DelCategoryView(DeleteView):
     model = Categories
 
     def get_object(self, *args, **kwargs):
-        race = self.kwargs['race_slug']
+        race_slug = self.kwargs['race_slug']
         slug = self.kwargs['slug']
-        return get_object_or_404(Categories, slug=slug, race__slug=race)
+        return get_object_or_404(Categories, slug=slug, race__slug=race_slug)
 
     def get_success_url(self):
         slug = self.kwargs['race_slug']
