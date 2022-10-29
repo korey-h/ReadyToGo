@@ -101,6 +101,11 @@ class Categories(models.Model):
 
 class Participants(models.Model):
 
+    def set_def_category(collector, field, sub_objs, using):
+        race = sub_objs[0].race
+        default = race.race_categories.all().first()
+        collector.add_field_update(field, default, sub_objs)
+
     race = models.ForeignKey(Races,
                              on_delete=models.CASCADE,
                              related_name='race_participants',
@@ -108,10 +113,10 @@ class Participants(models.Model):
                              )
     category = models.ForeignKey(
                             Categories,
-                            on_delete=models.CASCADE,
+                            on_delete=set_def_category,
                             related_name='category_participants',
                             verbose_name='Категория участника',
-                             )
+                            )
     name = models.CharField(verbose_name="Имя", max_length=30)
     surname = models.CharField(verbose_name="Фамилия", max_length=30)
     patronymic = models.CharField(
