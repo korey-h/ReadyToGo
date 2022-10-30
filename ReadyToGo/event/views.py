@@ -3,9 +3,9 @@ from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from registration.models import Categories, Cups, Races
+from registration.utilities import DefCategory
 
 from .forms import CategoryForm, CupForm, RaceForm
-from .utilities import create_def_category
 
 
 def cup_info(request, slug):
@@ -68,7 +68,7 @@ class RaceView(CreateView, UpdateView, ):
 
     def form_valid(self, form):
         result = super().form_valid(form)
-        create_def_category(self.object, CategoryForm)
+        DefCategory.create(self.object, Categories)
         return result
 
 

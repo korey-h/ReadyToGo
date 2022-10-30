@@ -7,6 +7,20 @@ from slugify import slugify
 
 from . import cleaners
 
+from .utilities import DefCategory
+
+
+def set_def_category(collector, field, sub_objs, using):
+    race = sub_objs[0].race
+    def_slug = DefCategory.name, DefCategory.slug
+
+    finded = race.race_categories.all().filter(slug=def_slug)
+    if finded:
+        default = finded[0]
+    else:
+        default = DefCategory.create(race, Categories)
+    collector.add_field_update(field, default, sub_objs)
+
 
 class Cups(models.Model):
     name = models.CharField(
@@ -34,9 +48,10 @@ class Races(models.Model):
     slug = models.SlugField(max_length=70, default='autoslug', blank=True)
     date = models.DateField(verbose_name="Дата проведения",)
     cup = models.ForeignKey(Cups,
-                            on_delete=models.CASCADE,
+                            on_delete=models.SET_DEFAULT,
                             related_name='cup_races',
                             verbose_name="Группа гонок",
+                            default='',
                             blank=True, null=True,)
     town = models.CharField(verbose_name="Название города", max_length=50)
     numbers_amount = models.IntegerField(
@@ -57,9 +72,12 @@ class Races(models.Model):
 
     def save(self, *args, **kwargs):
         if self.slug == 'autoslug' or not self.slug:
-            self.slug = (self.cup.slug + '-' + slugify(self.name) + '-'
+            cup_slug = 's'
+            if self.cup:
+                cup_slug = self.cup.slug
+            self.slug = (cup_slug + '-' + slugify(self.name) + '-'
                          + datetime.strftime(self.date, '%d-%m-%y'))
-        super(Races, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     class Meta:
         unique_together = [['slug', 'date']]
@@ -101,13 +119,8 @@ class Categories(models.Model):
 
 class Participants(models.Model):
 
-    def set_def_category(collector, field, sub_objs, using):
-        race = sub_objs[0].race
-        default = race.race_categories.all().first()
-        collector.add_field_update(field, default, sub_objs)
-
     race = models.ForeignKey(Races,
-                             on_delete=models.CASCADE,
+                             on_delete=models.DO_NOTHING,
                              related_name='race_participants',
                              verbose_name="Название гонки",
                              )
@@ -155,4 +168,4 @@ class Participants(models.Model):
                               person.surname != self.surname and
                               person.patronymic != self.patronymic):
             cleaners.unique_person_clean(self)
-        super(Participants, self).clean()
+        super().clean()

@@ -1,15 +1,40 @@
 import base64
 import hashlib
 import re
+import time
+
+
+class DefCategory:
+    name = 'без категории'
+    slug = 'main_category'
+    old = 75
+    yang = 8
+
+    @staticmethod
+    def create(race_obj, category_class):
+        """ создание категории участников по умолчанию """
+        year = int(time.strftime('%Y'))
+        kwargs = {
+            'name': DefCategory.name,
+            'slug': DefCategory.slug,
+            'race': race_obj,
+            'year_old': year - DefCategory.old,
+            'year_yang': year - DefCategory.yang,
+        }
+
+        default = category_class(**kwargs)
+        default.save()
+        return default
 
 
 class NumbersChecker():
-    # принимает список занятых диапазонов вида [(1,10), (31,31), (33, 50)],
-    # общее количество номеров (например, 100) и значение начального номера
-    # возвращает список своводных диапазонов в виде
-    #  [(11,30), (32,32), (51, 100)]
     @staticmethod
     def get_free_ranges(booked, num_amount, start=1):
+        """ принимает список занятых диапазонов вида [(1,10), (31,31), (33, 50)],
+    общее количество номеров (например, 100) и значение начального номера
+    возвращает список своводных диапазонов
+    в виде [(11,30), (32,32), (51, 100)]"""
+
         if not booked:
             return [(start, num_amount)]
         booked.sort(key=lambda x: x[0])
@@ -23,12 +48,13 @@ class NumbersChecker():
             free_ranges.append((last_booked + 1, num_amount))
         return free_ranges
 
-    # принимает список свободных диапазонов вида [(11,30), (32,32), (51, 100)]
-    # и список зарезервированных номеров (1,11,32,33,55)
-    # возвращает список с диапазонами свобоных номеров вида
-    # [(12,30), (51,54), (56, 100)]
     @staticmethod
     def range_free_nums(free_ranges, booked_nums):
+        """ принимает список свободных диапазонов вида [(11,30), (32,32), (51, 100)]
+    и список зарезервированных номеров (1,11,32,33,55)
+    возвращает список с диапазонами свобоных номеров вида
+    [(12,30), (51,54), (56, 100)]"""
+
         booked_nums.sort()
         nums_amount = len(booked_nums)
         point = 0
@@ -52,10 +78,10 @@ class NumbersChecker():
                 free_nums.append((left_verge, right_verge),)
         return free_nums
 
-    # форматирует список диапазонов вида [(11,30), (32,32), (51, 100)]
-    # в строку вида '11-30, 32, 51-100'
     @staticmethod
     def str_free(free_nums):
+        """    форматирует список диапазонов вида [(11,30), (32,32), (51, 100)]
+    в строку вида '11-30, 32, 51-100'"""
         if not free_nums:
             return 'Все стартовые номера заняты.'
         info = 'Для выбора доступны номера:'
@@ -66,10 +92,11 @@ class NumbersChecker():
             info += ','
         return info
 
-    # проверяет наличие номера в списке диапазонов вида
-    # [(11,30), (32,32), (51, 100)]
     @staticmethod
     def chek_free(num, free_nums):
+        """проверяет наличие номера в списке диапазонов вида
+    [(11,30), (32,32), (51, 100)]"""
+
         for verges in free_nums:
             if num in range(verges[0], verges[1] + 1):
                 return True
@@ -88,3 +115,5 @@ def get_reg_code(data):
     to_hash = data.encode()
     hs = hashlib.md5(to_hash).digest()
     return base64.urlsafe_b64encode(hs).decode('ascii').replace('=', '')
+
+

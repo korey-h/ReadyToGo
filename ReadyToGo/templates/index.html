@@ -17,7 +17,10 @@
         <tr>
             <td scope="row" >{{ race.date|date:"d.m.Y" }}</td>
             <td> <a href="{% url 'race_info' slug=race.slug %}"> {{ race.name }} </a> </td>
-            <td> <a href="{% url 'cup_info' slug=race.cup.slug %}"> {{ race.cup }}</a> </td> 
+            <td>
+              {% if race.cup %}
+                <a href="{% url 'cup_info' slug=race.cup.slug %}"> {{ race.cup }}</a>
+              {% endif %} </td> 
             <td> {{ race.town }} </td>
         </tr>        
         {% endfor %}
