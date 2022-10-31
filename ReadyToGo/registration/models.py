@@ -11,15 +11,20 @@ from .utilities import DefCategory
 
 
 def set_def_category(collector, field, sub_objs, using):
-    race = sub_objs[0].race
-    def_slug = DefCategory.name, DefCategory.slug
 
-    finded = race.race_categories.all().filter(slug=def_slug)
-    if finded:
-        default = finded[0]
+    race = sub_objs[0].race
+    race_categories = race.race_categories.all()
+    def_slug = DefCategory.name, DefCategory.slug
+    amount = race_categories.count()
+    finded = race_categories.filter(slug=def_slug)
+    if amount <= 1:
+        models.SET_NULL(collector, field, sub_objs, using)
     else:
-        default = DefCategory.create(race, Categories)
-    collector.add_field_update(field, default, sub_objs)
+        if finded:
+            default = finded[0]
+        else:
+            default = DefCategory.create(race, Categories)
+        collector.add_field_update(field, default, sub_objs)
 
 
 class Cups(models.Model):
@@ -111,7 +116,7 @@ class Categories(models.Model):
     def save(self, *args, **kwargs):
         if self.slug == 'autoslug' or not self.slug:
             self.slug = slugify(self.name)
-        super(Categories, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     class Meta:
         unique_together = [['slug', 'race']]
@@ -120,15 +125,18 @@ class Categories(models.Model):
 class Participants(models.Model):
 
     race = models.ForeignKey(Races,
-                             on_delete=models.DO_NOTHING,
+                             on_delete=models.SET_NULL,
                              related_name='race_participants',
                              verbose_name="Название гонки",
+                             null=True,
                              )
     category = models.ForeignKey(
                             Categories,
                             on_delete=set_def_category,
+                            # on_delete=models.SET_NULL,
                             related_name='category_participants',
                             verbose_name='Категория участника',
+                            null=True
                             )
     name = models.CharField(verbose_name="Имя", max_length=30)
     surname = models.CharField(verbose_name="Фамилия", max_length=30)
