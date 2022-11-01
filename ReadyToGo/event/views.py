@@ -1,4 +1,5 @@
 from django.core.paginator import Paginator
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
@@ -20,6 +21,23 @@ def get_all_cups(request):
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
     return render(request, 'cups_all.html', {'page': page})
+
+
+def race_by_template(request):
+    if request.method == 'POST':
+        race_slug = request.POST.get('race_slug')
+        query = Races.objects.filter(slug=race_slug)
+        if query:
+            race_data = query.values()[0]
+            race_data.pop('id')
+            race_data.pop('slug')
+            race_data['name'] += '_copy'
+            new = Races.objects.create(**race_data)
+            return HttpResponseRedirect(
+                reverse('race_update', kwargs={'slug': new.slug})
+            )
+
+    return HttpResponseRedirect(reverse('race_create'))
 
 
 class CupView(CreateView, UpdateView, ):

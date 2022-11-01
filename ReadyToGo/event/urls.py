@@ -11,6 +11,8 @@ urlpatterns = [
     path("cup/delete/<slug:slug>/", views.DelCupView.as_view(),
          name="cup_delete"),
 
+    path("create/race/by_template/", views.race_by_template,
+         name="race_by_template"),
     path("create/race/", views.RaceView.as_view(), name="race_create"),
     path("race/update/<slug:slug>/", views.RaceView.as_view(),
          name="race_update"),

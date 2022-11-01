@@ -6,7 +6,6 @@ from django.db import models
 from slugify import slugify
 
 from . import cleaners
-
 from .utilities import DefCategory
 
 
