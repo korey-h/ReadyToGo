@@ -13,14 +13,14 @@
         {% endif %}
         <a class="btn btn-info" href="{% url 'race_update' slug=race.slug %}" role="button">Редактировать соревнование</a>
         <!-- Кнопка-триггер модального окна -->
-        <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#delConfModal"> 
+        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#delConfModal"> 
           Удалить соревнование
-        </button>
+        </button>        
         <form action="{% url 'race_by_template' %}" method="POST">{% csrf_token %} 
           <input type="hidden" name="race_slug" value={{ race.slug }}>
-          <input type="submit" class="btn-check" name="options-outlined" id="copy" autocomplete="off">
-          <label class="btn btn-outline-danger" for="copy">Скопировать</label>
-       </form> 
+          <input type="submit" class="btn-check" name="options-outlined" id="copy">
+          <label class="btn btn-info" for="copy">Скопировать</label>
+        </form> 
       </p>
       <div class="card-body">
         <p>

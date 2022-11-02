@@ -31,8 +31,17 @@ def race_by_template(request):
             race_data = query.values()[0]
             race_data.pop('id')
             race_data.pop('slug')
-            race_data['name'] += '_copy'
+            race_data['name'] = 'copy_' + race_data['name']
             new = Races.objects.create(**race_data)
+
+            race_categories = query[0].race_categories.all()
+            for cat in race_categories.values():
+                print('race_by_template', cat)
+                cat.pop('id')
+                cat['race_id'] = new.id
+                print('race_by_template', cat)
+                Categories.objects.create(**cat)
+
             return HttpResponseRedirect(
                 reverse('race_update', kwargs={'slug': new.slug})
             )
@@ -49,7 +58,7 @@ class CupView(CreateView, UpdateView, ):
         url = reverse('cup_create')
         if self.request.path == url:
             return reverse('all_cups')
-        slug = self.kwargs['slug']
+        slug = self.object.slug
         return reverse('cup_info', kwargs={'slug': slug})
 
     def get_object(self, *args, **kwargs):
@@ -75,7 +84,7 @@ class RaceView(CreateView, UpdateView, ):
         url = reverse('race_create')
         if self.request.path == url:
             return reverse('index')
-        slug = self.kwargs['slug']
+        slug = self.object.slug
         return reverse('race_info', kwargs={'slug': slug})
 
     def get_object(self, *args, **kwargs):
@@ -86,7 +95,9 @@ class RaceView(CreateView, UpdateView, ):
 
     def form_valid(self, form):
         result = super().form_valid(form)
-        DefCategory.create(self.object, Categories)
+        url = reverse('race_create')
+        if self.request.path == url:
+            DefCategory.create(self.object, Categories)
         return result
 
 
