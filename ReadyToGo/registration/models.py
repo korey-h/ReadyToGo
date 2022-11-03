@@ -10,16 +10,13 @@ from .utilities import DefCategory
 
 
 def set_def_category(collector, field, sub_objs, using):
-
     race = sub_objs[0].race
     race_categories = race.race_categories.all()
-    def_slug = DefCategory.name, DefCategory.slug
-    amount = race_categories.count()
-    finded = race_categories.filter(slug=def_slug)
-    if amount <= 1:
+    finded = race_categories.filter(slug=DefCategory.slug)
+    if race_categories.count() <= 1:
         models.SET_NULL(collector, field, sub_objs, using)
     else:
-        if finded:
+        if finded.exists():
             default = finded[0]
         else:
             default = DefCategory.create(race, Categories)

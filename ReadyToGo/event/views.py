@@ -36,10 +36,8 @@ def race_by_template(request):
 
             race_categories = query[0].race_categories.all()
             for cat in race_categories.values():
-                print('race_by_template', cat)
                 cat.pop('id')
                 cat['race_id'] = new.id
-                print('race_by_template', cat)
                 Categories.objects.create(**cat)
 
             return HttpResponseRedirect(
@@ -106,6 +104,18 @@ class DelRaceView(DeleteView):
 
     def get_success_url(self):
         return reverse('index')
+
+    def delete(self, request, *args, **kwargs):
+        """Предварительное удаление связанных Categories.
+        Иначе set_def_category мешает
+        """
+        self.object = self.get_object()
+        self.object.race_categories.exclude(slug=DefCategory.slug).delete()
+
+        # непосредственное удаление Race
+        success_url = self.get_success_url()
+        self.object.delete()
+        return HttpResponseRedirect(success_url)
 
 
 class CategoryView(CreateView, UpdateView, ):
