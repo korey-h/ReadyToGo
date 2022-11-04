@@ -4,7 +4,7 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 
-from .models import Participants
+from .models import Cups, Participants
 
 User = get_user_model()
 
@@ -50,3 +50,9 @@ class RegEditForm(forms.Form):
     reg_code = forms.CharField(label="Код регистрации",
                                max_length=50, required=True,
                                validators=[existence_chek])
+
+
+class RaceFilterForm(forms.Form):
+    from_time = forms.DateField(required=False, label='период от')
+    to_time = forms.DateField(required=False, label='период до')
+    cup = forms.ModelChoiceField(required=False, queryset=Cups.objects.all())

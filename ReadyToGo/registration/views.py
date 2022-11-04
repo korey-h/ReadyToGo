@@ -4,17 +4,34 @@ from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
-from .forms import RegEditForm, RegForm
+from .forms import RaceFilterForm, RegEditForm, RegForm
 from .models import Participants, Races
 from .utilities import get_reg_code
 
 
 def index(request):
-    races = Races.objects.all().order_by('date')
+    params = {}
+    form = RaceFilterForm(request.POST or None)
+    if form.is_valid():
+        data = form.cleaned_data
+        from_time = data['from_time']
+        to_time = data['to_time']
+        if data['cup']:
+            params.update({'cup_id': data['cup']})
+        if from_time and to_time:
+            params.update(
+                {'date__range': (from_time, to_time)}
+            )
+        elif from_time:
+            params.update({'date__gte': from_time})
+        elif to_time:
+            params.update({'date__lte': to_time})
+
+    races = Races.objects.filter(**params).order_by('date')
     paginator = Paginator(races, 10)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
-    return render(request, 'index.html', {'page': page})
+    return render(request, 'index.html', {'page': page, 'filter_form': form})
 
 
 def race_info(request, slug):

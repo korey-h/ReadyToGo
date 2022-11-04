@@ -2,6 +2,14 @@
 {% block title %}Все соревнования{% endblock %}
 {% block content %}
 <div class="container"> 
+<form method="post" action="{{ request.path }}">
+  {% csrf_token %}
+  {{filter_form}}
+  <input type="submit"  class="btn-check" name="options-outlined" id="danger-outlined" autocomplete="off">
+  <label class="btn btn-outline-primary" for="danger-outlined">Найти</label>
+</form>
+</div> 
+<div class="container"> 
     <table class="table table-bordered table-sm" >
       <thead style="background: rgb(158, 215, 225)"> 
         <tr>
