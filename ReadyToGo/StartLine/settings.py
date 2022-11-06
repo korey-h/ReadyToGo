@@ -55,11 +55,12 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'StartLine.urls'
 
 TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
+TEMPLATES_DIR_AUTH = os.path.join(BASE_DIR, "templates/users")
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [TEMPLATES_DIR],
+        'DIRS': [TEMPLATES_DIR, TEMPLATES_DIR_AUTH],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -127,3 +128,9 @@ STATIC_URL = '/static/'
 # настройки моделей
 
 START_NUM = 1
+
+LOGIN_URL = '/auth/login/'
+LOGIN_REDIRECT_URL = 'index'
+LOGOUT_REDIRECT_URL = 'index'
+EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'sent_emails')
