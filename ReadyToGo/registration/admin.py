@@ -13,13 +13,13 @@ class RacesAdmin(admin.ModelAdmin):
 
 
 class CupsAdmin(admin.ModelAdmin):
-    list_display = ('name', 'slug', 'description')
-    search_fields = ('name', 'slug', 'description')
-    list_filter = ('name', )
+    list_display = ('name', 'slug', 'description', 'maker')
+    search_fields = ('name', 'slug', 'description', 'maker')
+    list_filter = ('name', 'maker')
 
 
 class CategoriesAdmin(admin.ModelAdmin):
-    list_display = ('id','name', 'slug', 'race', 'year_old', 'year_yang',
+    list_display = ('id', 'name', 'slug', 'race', 'year_old', 'year_yang',
                     'number_start', 'number_end', 'description')
     search_fields = ('name', 'slug', 'description', 'race')
     list_filter = ('name', 'race')

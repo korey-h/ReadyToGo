@@ -1,12 +1,15 @@
 
 from datetime import datetime
 
+from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
 from django.db import models
 from slugify import slugify
 
 from . import cleaners
 from .utilities import DefCategory
+
+Users = get_user_model()
 
 
 def set_def_category(collector, field, sub_objs, using):
@@ -31,6 +34,10 @@ class Cups(models.Model):
     )
     slug = models.SlugField(max_length=70, default='autoslug', unique=True,)
     description = models.TextField(max_length=150, blank=True, null=True,)
+    maker = models.ForeignKey(Users,
+                              on_delete=models.SET_NULL,
+                              related_name='maker_cups',
+                              null=True)
 
     def __str__(self):
         return self.name
@@ -129,7 +136,6 @@ class Participants(models.Model):
     category = models.ForeignKey(
                             Categories,
                             on_delete=set_def_category,
-                            # on_delete=models.SET_NULL,
                             related_name='category_participants',
                             verbose_name='Категория участника',
                             null=True

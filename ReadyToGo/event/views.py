@@ -65,6 +65,14 @@ class CupView(CreateView, UpdateView, ):
             return None
         return super().get_object(*args, **kwargs)
 
+    def form_valid(self, form):
+        # добавить обработку: если редактирование выполняет суперпользователь
+        # имя первоначального создателя сохраняется
+        self.object = form.save(commit=False)
+        self.object.maker = self.request.user
+        self.object.save()
+        return HttpResponseRedirect(self.get_success_url())
+
 
 class DelCupView(DeleteView):
     model = Cups

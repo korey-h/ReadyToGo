@@ -7,7 +7,7 @@ class CupForm(forms.ModelForm):
 
     class Meta():
         model = Cups
-        fields = '__all__'
+        exclude = ['maker', ]
 
 
 class RaceForm(forms.ModelForm):
