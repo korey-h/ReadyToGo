@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
@@ -58,7 +59,7 @@ def enter_edit_reg_info(request, slug):
     return render(request, "entr_edit_form.html", {"form": form, 'race': race})
 
 
-class RegView(CreateView, UpdateView, ):
+class RegView(LoginRequiredMixin, CreateView, UpdateView, ):
     model = Participants
     form_class = RegForm
     template_name = 'reg_form.html'
@@ -103,7 +104,7 @@ class RegView(CreateView, UpdateView, ):
         return super().get_object(*args, **kwargs)
 
 
-class DelRegView(DeleteView):
+class DelRegView(LoginRequiredMixin, DeleteView):
     model = Participants
     slug_field = None
     template_name = None

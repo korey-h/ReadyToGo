@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
@@ -47,7 +48,7 @@ def race_by_template(request):
     return HttpResponseRedirect(reverse('race_create'))
 
 
-class CupView(CreateView, UpdateView, ):
+class CupView(LoginRequiredMixin, CreateView, UpdateView, ):
     model = Cups
     form_class = CupForm
     template_name = 'cup_create_form.html'
@@ -66,22 +67,21 @@ class CupView(CreateView, UpdateView, ):
         return super().get_object(*args, **kwargs)
 
     def form_valid(self, form):
-        # добавить обработку: если редактирование выполняет суперпользователь
-        # имя первоначального создателя сохраняется
         self.object = form.save(commit=False)
-        self.object.maker = self.request.user
+        if not self.object.id:
+            self.object.maker = self.request.user
         self.object.save()
         return HttpResponseRedirect(self.get_success_url())
 
 
-class DelCupView(DeleteView):
+class DelCupView(LoginRequiredMixin, DeleteView):
     model = Cups
 
     def get_success_url(self):
         return reverse('all_cups')
 
 
-class RaceView(CreateView, UpdateView, ):
+class RaceView(LoginRequiredMixin, CreateView, UpdateView, ):
     model = Races
     form_class = RaceForm
     template_name = 'race_create_form.html'
@@ -107,7 +107,7 @@ class RaceView(CreateView, UpdateView, ):
         return result
 
 
-class DelRaceView(DeleteView):
+class DelRaceView(LoginRequiredMixin, DeleteView):
     model = Races
 
     def get_success_url(self):
@@ -126,7 +126,7 @@ class DelRaceView(DeleteView):
         return HttpResponseRedirect(success_url)
 
 
-class CategoryView(CreateView, UpdateView, ):
+class CategoryView(LoginRequiredMixin, CreateView, UpdateView, ):
     model = Categories
     form_class = CategoryForm
     template_name = 'cat_create_form.html'
@@ -151,7 +151,7 @@ class CategoryView(CreateView, UpdateView, ):
         return get_object_or_404(Categories, slug=slug, race__slug=race)
 
 
-class DelCategoryView(DeleteView):
+class DelCategoryView(LoginRequiredMixin, DeleteView):
     model = Categories
 
     def get_object(self, *args, **kwargs):
