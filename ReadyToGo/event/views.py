@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
@@ -48,15 +49,17 @@ def race_by_template(request):
     return HttpResponseRedirect(reverse('race_create'))
 
 
-class CupView(LoginRequiredMixin, CreateView, UpdateView, ):
+class CupView(LoginRequiredMixin, PermissionRequiredMixin,
+              CreateView, UpdateView, ):
     model = Cups
     form_class = CupForm
     template_name = 'cup_create_form.html'
 
     def get_success_url(self):
-        url = reverse('cup_create')
-        if self.request.path == url:
+        url = self.request.path
+        if url == reverse('cup_create'):
             return reverse('all_cups')
+
         slug = self.object.slug
         return reverse('cup_info', kwargs={'slug': slug})
 
@@ -73,12 +76,26 @@ class CupView(LoginRequiredMixin, CreateView, UpdateView, ):
         self.object.save()
         return HttpResponseRedirect(self.get_success_url())
 
+    def has_permission(self):
+        user = self.request.user
+        obj = self.get_object()
+        if obj:
+            return user.is_superuser or (user == obj.maker)
+        return True
 
-class DelCupView(LoginRequiredMixin, DeleteView):
+
+class DelCupView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     model = Cups
 
     def get_success_url(self):
         return reverse('all_cups')
+
+    def has_permission(self):
+        user = self.request.user
+        obj = self.get_object()
+        if obj:
+            return user.is_superuser or (user == obj.maker)
+        return True
 
 
 class RaceView(LoginRequiredMixin, CreateView, UpdateView, ):

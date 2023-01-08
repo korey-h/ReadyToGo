@@ -1,5 +1,4 @@
 from django import forms
-
 from registration.models import Categories, Cups, Races
 
 
