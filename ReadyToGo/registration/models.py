@@ -74,6 +74,10 @@ class Races(models.Model):
         verbose_name="регистрация активна",
         default=True
         )
+    maker = models.ForeignKey(Users,
+                              on_delete=models.SET_NULL,
+                              related_name='maker_races',
+                              null=True)
 
     def __str__(self):
         return self.name

@@ -6,7 +6,7 @@
     <div class="card">
       <h3 class="card-header">{{ cup.name }}</h3>
       <div class="card-body">
-        {% if user.is_authenticated %}
+        {% if is_maker %}
           <a class="btn btn-info" href="{% url 'cup_update' slug=cup.slug %}" role="button">Редактировать</a>
           <!-- Кнопка-триггер модального окна -->
           <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#delConfModal"> 

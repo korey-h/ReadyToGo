@@ -37,7 +37,11 @@ def index(request):
 
 def race_info(request, slug):
     race = get_object_or_404(Races, slug=slug)
-    return render(request, 'race_info.html', {'race': race})
+    is_maker = request.user.is_superuser or race.maker == request.user
+    return render(
+        request, 'race_info.html',
+        {'race': race, 'is_maker': is_maker}
+        )
 
 
 def race_participants(request, slug):

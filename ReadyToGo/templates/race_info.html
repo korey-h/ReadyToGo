@@ -11,12 +11,14 @@
           <a class="btn btn-primary" href="{% url 'race_registration' slug=race.slug %}" role="button">Зарегистрироваться</a>
           <a class="btn btn-primary" href="{% url 'edit_reg_info' slug=race.slug %}" role="button">Редактировать заявку</a>
         {% endif %}
-        {% if user.is_authenticated %}
+        {% if is_maker %}
           <a class="btn btn-info" href="{% url 'race_update' slug=race.slug %}" role="button">Редактировать соревнование</a>
           <!-- Кнопка-триггер модального окна -->
           <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#delConfModal"> 
             Удалить соревнование
-          </button>        
+          </button>
+        {% endif %}
+        {% if user.is_authenticated %}       
           <form action="{% url 'race_by_template' %}" method="POST">{% csrf_token %} 
             <input type="hidden" name="race_slug" value={{ race.slug }}>
             <input type="submit" class="btn-check" name="options-outlined" id="copy">

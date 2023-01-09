@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.core.paginator import Paginator
@@ -13,8 +14,11 @@ from .forms import CategoryForm, CupForm, RaceForm
 
 def cup_info(request, slug):
     cup = get_object_or_404(Cups, slug=slug)
-    return render(request, 'cup_info.html',
-                  {'cup': cup, 'races': cup.cup_races.all()})
+    is_maker = request.user.is_superuser or cup.maker == request.user
+    return render(
+        request, 'cup_info.html',
+        {'cup': cup, 'races': cup.cup_races.all(), 'is_maker': is_maker}
+        )
 
 
 def get_all_cups(request):
@@ -25,6 +29,7 @@ def get_all_cups(request):
     return render(request, 'cups_all.html', {'page': page})
 
 
+@login_required
 def race_by_template(request):
     if request.method == 'POST':
         race_slug = request.POST.get('race_slug')
@@ -33,7 +38,8 @@ def race_by_template(request):
             race_data = query.values()[0]
             race_data.pop('id')
             race_data.pop('slug')
-            race_data['name'] = 'copy_' + race_data['name']
+            maker = request.user.username
+            race_data['name'] = maker + '_' + 'copy_' + race_data['name']
             new = Races.objects.create(**race_data)
 
             race_categories = query[0].race_categories.all()
