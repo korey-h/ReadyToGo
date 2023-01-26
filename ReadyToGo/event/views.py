@@ -1,6 +1,5 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
@@ -10,6 +9,7 @@ from registration.models import Categories, Cups, Races
 from registration.utilities import DefCategory
 
 from .forms import CategoryForm, CupForm, RaceForm
+from .permissions import MakerRequiredMixin
 
 
 def cup_info(request, slug):
@@ -55,7 +55,7 @@ def race_by_template(request):
     return HttpResponseRedirect(reverse('race_create'))
 
 
-class CupView(LoginRequiredMixin, PermissionRequiredMixin,
+class CupView(LoginRequiredMixin, MakerRequiredMixin,
               CreateView, UpdateView, ):
     model = Cups
     form_class = CupForm
@@ -82,26 +82,12 @@ class CupView(LoginRequiredMixin, PermissionRequiredMixin,
         self.object.save()
         return HttpResponseRedirect(self.get_success_url())
 
-    def has_permission(self):
-        user = self.request.user
-        obj = self.get_object()
-        if obj:
-            return user.is_superuser or (user == obj.maker)
-        return True
 
-
-class DelCupView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+class DelCupView(LoginRequiredMixin, MakerRequiredMixin, DeleteView):
     model = Cups
 
     def get_success_url(self):
         return reverse('all_cups')
-
-    def has_permission(self):
-        user = self.request.user
-        obj = self.get_object()
-        if obj:
-            return user.is_superuser or (user == obj.maker)
-        return True
 
 
 class RaceView(LoginRequiredMixin, CreateView, UpdateView, ):
@@ -123,11 +109,11 @@ class RaceView(LoginRequiredMixin, CreateView, UpdateView, ):
         return super().get_object(*args, **kwargs)
 
     def form_valid(self, form):
-        result = super().form_valid(form)
+
         url = reverse('race_create')
         if self.request.path == url:
             DefCategory.create(self.object, Categories)
-        return result
+        return super().form_valid(form)
 
 
 class DelRaceView(LoginRequiredMixin, DeleteView):
