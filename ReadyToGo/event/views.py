@@ -90,7 +90,8 @@ class DelCupView(LoginRequiredMixin, MakerRequiredMixin, DeleteView):
         return reverse('all_cups')
 
 
-class RaceView(LoginRequiredMixin, CreateView, UpdateView, ):
+class RaceView(LoginRequiredMixin, MakerRequiredMixin,
+               CreateView, UpdateView, ):
     model = Races
     form_class = RaceForm
     template_name = 'race_create_form.html'
@@ -109,14 +110,17 @@ class RaceView(LoginRequiredMixin, CreateView, UpdateView, ):
         return super().get_object(*args, **kwargs)
 
     def form_valid(self, form):
-
+        self.object = form.save(commit=False)
+        if not self.object.id:
+            self.object.maker = self.request.user
+        self.object.save()
         url = reverse('race_create')
         if self.request.path == url:
             DefCategory.create(self.object, Categories)
-        return super().form_valid(form)
+        return HttpResponseRedirect(self.get_success_url())
 
 
-class DelRaceView(LoginRequiredMixin, DeleteView):
+class DelRaceView(LoginRequiredMixin, MakerRequiredMixin, DeleteView):
     model = Races
 
     def get_success_url(self):
@@ -135,7 +139,8 @@ class DelRaceView(LoginRequiredMixin, DeleteView):
         return HttpResponseRedirect(success_url)
 
 
-class CategoryView(LoginRequiredMixin, CreateView, UpdateView, ):
+class CategoryView(LoginRequiredMixin, MakerRequiredMixin,
+                   CreateView, UpdateView, ):
     model = Categories
     form_class = CategoryForm
     template_name = 'cat_create_form.html'
@@ -159,8 +164,15 @@ class CategoryView(LoginRequiredMixin, CreateView, UpdateView, ):
         slug = self.kwargs['slug']
         return get_object_or_404(Categories, slug=slug, race__slug=race)
 
+    def form_valid(self, form):
+        self.object = form.save(commit=False)
+        if not self.object.id:
+            self.object.maker = self.request.user
+        self.object.save()
+        return HttpResponseRedirect(self.get_success_url())
 
-class DelCategoryView(LoginRequiredMixin, DeleteView):
+
+class DelCategoryView(LoginRequiredMixin, MakerRequiredMixin, DeleteView):
     model = Categories
 
     def get_object(self, *args, **kwargs):

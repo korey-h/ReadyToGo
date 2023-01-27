@@ -13,12 +13,12 @@ class RaceForm(forms.ModelForm):
 
     class Meta():
         model = Races
-        fields = '__all__'
+        exclude = ['maker', ]
 
 
 class CategoryForm(forms.ModelForm):
 
     class Meta():
         model = Categories
-        fields = '__all__'
+        exclude = ['maker', ]
         widgets = {'race': forms.HiddenInput()}

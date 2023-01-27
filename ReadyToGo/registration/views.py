@@ -46,8 +46,11 @@ def race_info(request, slug):
 
 def race_participants(request, slug):
     race = get_object_or_404(Races, slug=slug)
+    is_maker = request.user.is_superuser or race.maker == request.user
     return render(request, 'participants.html',
-                  {'race': race, 'participants': race.race_participants.all()})
+                  {'race': race,
+                   'participants': race.race_participants.all(),
+                   'is_maker': is_maker})
 
 
 def enter_edit_reg_info(request, slug):
@@ -63,7 +66,7 @@ def enter_edit_reg_info(request, slug):
     return render(request, "entr_edit_form.html", {"form": form, 'race': race})
 
 
-class RegView(LoginRequiredMixin, CreateView, UpdateView, ):
+class RegCreateView(LoginRequiredMixin, CreateView, UpdateView, ):
     model = Participants
     form_class = RegForm
     template_name = 'reg_form.html'

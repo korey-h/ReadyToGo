@@ -36,6 +36,7 @@ class Cups(models.Model):
     description = models.TextField(max_length=150, blank=True, null=True,)
     maker = models.ForeignKey(Users,
                               on_delete=models.SET_NULL,
+                              verbose_name='Создатель',
                               related_name='maker_cups',
                               null=True)
 
@@ -63,7 +64,7 @@ class Races(models.Model):
                             blank=True, null=True,)
     town = models.CharField(verbose_name="Название города", max_length=50)
     numbers_amount = models.IntegerField(
-        verbose_name="Количество стартовых номеров",
+        verbose_name="Всего номеров",
         validators=[MinValueValidator(1, message='Количество не меньше 1')]
         )
 
@@ -77,6 +78,7 @@ class Races(models.Model):
     maker = models.ForeignKey(Users,
                               on_delete=models.SET_NULL,
                               related_name='maker_races',
+                              verbose_name='Создатель',
                               null=True)
 
     def __str__(self):
@@ -116,6 +118,11 @@ class Categories(models.Model):
         blank=True, null=True,
         validators=[MinValueValidator(1, message='Значение не меньше 1'), ])
     description = models.TextField(max_length=150, blank=True)
+    maker = models.ForeignKey(Users,
+                              on_delete=models.SET_NULL,
+                              related_name='maker_categories',
+                              verbose_name='Создатель',
+                              null=True)
 
     def __str__(self):
         return self.name

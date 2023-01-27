@@ -6,9 +6,9 @@ from .models import Categories, Cups, Participants, Races
 
 class RacesAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'slug', 'date', 'cup', 'town',
-                    'numbers_amount', 'is_active', 'description')
-    search_fields = ('name', 'date', 'cup', 'town', 'is_active')
-    list_filter = ('name', 'date', 'cup', 'town', 'is_active')
+                    'numbers_amount', 'maker', 'is_active', 'description')
+    search_fields = ('name', 'date', 'cup', 'town', 'is_active', 'maker')
+    list_filter = ('name', 'date', 'cup', 'town', 'is_active', 'maker')
     empty_value_display = '-пусто-'
 
 
@@ -20,9 +20,9 @@ class CupsAdmin(admin.ModelAdmin):
 
 class CategoriesAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'slug', 'race', 'year_old', 'year_yang',
-                    'number_start', 'number_end', 'description')
-    search_fields = ('name', 'slug', 'description', 'race')
-    list_filter = ('name', 'race')
+                    'number_start', 'number_end', 'maker', 'description')
+    search_fields = ('name', 'slug', 'description', 'race', 'maker')
+    list_filter = ('name', 'race', 'maker')
 
 
 class ParticipantsAdmin(admin.ModelAdmin):

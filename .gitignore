@@ -131,3 +131,6 @@ dmypy.json
 
 Start_Point/
 .Start_Point
+
+.vscode
+.vscode/
