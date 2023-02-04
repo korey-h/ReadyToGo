@@ -89,6 +89,11 @@ class DelCupView(LoginRequiredMixin, MakerRequiredMixin, DeleteView):
     def get_success_url(self):
         return reverse('all_cups')
 
+    def get(self, request, *args, **kwargs):
+        return HttpResponseRedirect(
+            reverse('cup_info', kwargs={'slug': kwargs['slug']})
+            )
+
 
 class RaceView(LoginRequiredMixin, MakerRequiredMixin,
                CreateView, UpdateView, ):
@@ -125,6 +130,11 @@ class DelRaceView(LoginRequiredMixin, MakerRequiredMixin, DeleteView):
 
     def get_success_url(self):
         return reverse('index')
+
+    def get(self, request, *args, **kwargs):
+        return HttpResponseRedirect(
+            reverse('race_info', kwargs={'slug': kwargs['slug']})
+            )
 
     def delete(self, request, *args, **kwargs):
         """Предварительное удаление связанных Categories.
@@ -183,3 +193,10 @@ class DelCategoryView(LoginRequiredMixin, MakerRequiredMixin, DeleteView):
     def get_success_url(self):
         slug = self.kwargs['race_slug']
         return reverse('race_update', kwargs={'slug': slug})
+
+    def get(self, request, *args, **kwargs):
+        return HttpResponseRedirect(
+            reverse('category_update',
+                    kwargs={'slug': kwargs['slug'],
+                            'race_slug': kwargs['race_slug']})
+            )
