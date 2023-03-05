@@ -40,7 +40,7 @@ class RegForm(forms.ModelForm):
 
 
 class RegEditForm(forms.Form):
-    @staticmethod
+
     def existence_chek(value):
         model = Participants
         if not model.objects.filter(reg_code=value):

@@ -7,6 +7,7 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
 from .forms import RaceFilterForm, RegEditForm, RegForm
 from .models import Participants, Races
+from .permissions import MakerRequiredMixin
 from .utilities import get_reg_code
 
 
@@ -66,7 +67,7 @@ def enter_edit_reg_info(request, slug):
     return render(request, "entr_edit_form.html", {"form": form, 'race': race})
 
 
-class RegCreateView(LoginRequiredMixin, CreateView, UpdateView, ):
+class RegCreateView(MakerRequiredMixin, CreateView, UpdateView,):
     model = Participants
     form_class = RegForm
     template_name = 'reg_form.html'
@@ -111,7 +112,7 @@ class RegCreateView(LoginRequiredMixin, CreateView, UpdateView, ):
         return super().get_object(*args, **kwargs)
 
 
-class DelRegView(LoginRequiredMixin, DeleteView):
+class DelRegView(LoginRequiredMixin, MakerRequiredMixin, DeleteView):
     model = Participants
     slug_field = None
     template_name = None
