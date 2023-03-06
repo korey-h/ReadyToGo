@@ -114,9 +114,14 @@ class RegCreateView(MakerRequiredMixin, CreateView, UpdateView,):
 
 class DelRegView(LoginRequiredMixin, MakerRequiredMixin, DeleteView):
     model = Participants
-    slug_field = None
-    template_name = None
 
     def get_success_url(self):
         slug = self.kwargs['slug']
         return reverse('race_participants', kwargs={'slug': slug})
+
+    def get(self, request, *args, **kwargs):
+        return HttpResponseRedirect(
+            reverse('update_participant',
+                    kwargs={'slug': kwargs['slug'],
+                            'pk': kwargs['pk']})
+            )

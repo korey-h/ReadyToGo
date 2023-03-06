@@ -181,3 +181,32 @@ class RegistrationPagesTests(TestCase):
                     f'Страница {address}: ожидаемый ответ 200,'
                     f' полученный - {responce.status_code}'
                 )
+
+    def test_private_urls_is_exists(self):
+        urls = [
+            reverse('update_participant',
+                    kwargs={'slug': self.base_race.slug,
+                            'pk': self.participant.id}),
+            reverse('delete_participant',
+                    kwargs={'slug': self.base_race.slug,
+                            'pk': self.participant.id}),
+        ]
+
+        for address in urls:
+            with self.subTest(address=address):
+                responce = self.anonim_client.get(address)
+                status_code = responce.status_code
+                ext_mess = 'Аноним получил доступ к закрытой странице!' if (
+                    status_code == 302) else ''
+                self.assertEqual(
+                    status_code, 302,
+                    f'Страница {address}: ожидаемый ответ 302,'
+                    f' полученный - {status_code}' + ext_mess
+                )
+
+                responce = self.super_client.get(address, follow=True)
+                self.assertEqual(
+                    responce.status_code, 200,
+                    f'Страница {address}: ожидаемый ответ 200,'
+                    f' полученный - {responce.status_code}'
+                )
