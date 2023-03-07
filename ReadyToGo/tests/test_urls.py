@@ -17,9 +17,11 @@ class EventPagesTests(TestCase):
         cls.superuser = User.objects.create_superuser(
             'admin', 'myemail@test.com', 'pass1234'
             )
+        cls.maker_user = User.objects.create(username='Maker')
         cls.base_cup = Cups.objects.create(
             name='Base_Cup',
             slug='base_cup_slug',
+            maker=cls.maker_user
         )
         cls.base_race = Races.objects.create(
             name='Base_Race',
@@ -27,13 +29,14 @@ class EventPagesTests(TestCase):
             date=datetime(year=2023, month=5, day=28),
             cup=cls.base_cup,
             town='Town',
-            numbers_amount=50
+            numbers_amount=50,
+            maker=cls.maker_user
         )
         cls.base_cat = Categories.objects.create(
             name='Base_category',
             slug='base_category',
             race=cls.base_race,
-            maker=cls.superuser,
+            maker=cls.maker_user,
             year_old=1940,
             year_yang=2000
         )
@@ -43,9 +46,11 @@ class EventPagesTests(TestCase):
 
         self.anonim_client = Client()
         self.auth_client = Client()
+        self.maker_client = Client()
         self.super_client = Client()
         self.auth_client.force_login(self.auth_user)
         self.super_client.force_login(self.superuser)
+        self.maker_client.force_login(self.maker_user)
 
     def test_shared_urls_is_exists(self):
         urls = [
@@ -77,7 +82,6 @@ class EventPagesTests(TestCase):
                         'race_slug': self.base_race.slug,
                         'slug': self.base_cat.slug}
                     ),
-
         ]
 
         for address in urls:
@@ -96,6 +100,45 @@ class EventPagesTests(TestCase):
                     status_code, 302,
                     f'Страница {address}: ожидаемый ответ 302,'
                     f' полученный - {status_code}' + ext_mess
+                )
+
+    def test_makers_urls_protection(self):
+        urls = [
+            reverse('cup_update', kwargs={'slug': self.base_cup.slug}),
+            reverse('race_update', kwargs={'slug': self.base_race.slug}),
+            reverse('category_create',
+                    kwargs={'race_slug': self.base_race.slug}
+                    ),
+            reverse('category_update',
+                    kwargs={
+                        'race_slug': self.base_race.slug,
+                        'slug': self.base_cat.slug}
+                    ),
+        ]
+
+        for address in urls:
+            with self.subTest(address=address):
+                responce = self.maker_client.get(address, follow=True)
+                self.assertEqual(
+                    responce.status_code, 200,
+                    f'Страница {address}: ожидаемый ответ 200,'
+                    f' полученный - {responce.status_code}'
+                )
+
+                responce = self.super_client.get(address, follow=True)
+                self.assertEqual(
+                    responce.status_code, 200,
+                    f'Страница {address}: ожидаемый ответ 200,'
+                    f' полученный - {responce.status_code}'
+                )
+
+                responce = self.auth_client.get(address)
+                status_code = responce.status_code
+                self.assertNotEqual(
+                    status_code, 200,
+                    'Пользователь получил доступ '
+                    'к настройкам чужой гонки!'
+                    f' {address}'
                 )
 
     def test_urls_for_delete_is_exists(self):
@@ -148,12 +191,14 @@ class RegistrationPagesTests(TestCase):
 
     def setUp(self):
         self.auth_user = User.objects.create(username='Guest')
-
+        self.maker_user = User.objects.create(username='Maker')
         self.anonim_client = Client()
         self.auth_client = Client()
+        self.maker_client = Client()
         self.super_client = Client()
         self.auth_client.force_login(self.auth_user)
         self.super_client.force_login(self.superuser)
+        self.maker_client.force_login(self.maker_user)
         self.participant = Participants.objects.create(
             race=self.base_race,
             name='Ivan',
@@ -209,4 +254,55 @@ class RegistrationPagesTests(TestCase):
                     responce.status_code, 200,
                     f'Страница {address}: ожидаемый ответ 200,'
                     f' полученный - {responce.status_code}'
+                )
+
+    def test_makers_urls_protection(self):
+        makers_race = Races.objects.create(
+            name='Makers_Race',
+            slug='makers_race_slug',
+            date=datetime(year=2023, month=5, day=28),
+            town='Town',
+            numbers_amount=50,
+            maker=self.maker_user)
+
+        test_racer = Participants.objects.create(
+            race=makers_race,
+            name='Test',
+            surname='Petrov',
+            number=1,
+            reg_code='@_22345'
+        )
+
+        urls = [
+            reverse('update_participant',
+                    kwargs={'slug': makers_race.slug,
+                            'pk': test_racer.id}),
+            reverse('delete_participant',
+                    kwargs={'slug': makers_race.slug,
+                            'pk': test_racer.id}),
+        ]
+
+        for address in urls:
+            with self.subTest(address=address):
+                responce = self.maker_client.get(address, follow=True)
+                self.assertEqual(
+                    responce.status_code, 200,
+                    f'Страница {address}: ожидаемый ответ 200,'
+                    f' полученный - {responce.status_code}'
+                )
+
+                responce = self.super_client.get(address, follow=True)
+                self.assertEqual(
+                    responce.status_code, 200,
+                    f'Страница {address}: ожидаемый ответ 200,'
+                    f' полученный - {responce.status_code}'
+                )
+
+                responce = self.auth_client.get(address)
+                status_code = responce.status_code
+                self.assertNotEqual(
+                    status_code, 200,
+                    'Пользователь получил доступ '
+                    'к настройкам чужой гонки!'
+                    f' {address}'
                 )
