@@ -1,0 +1,284 @@
+openapi: "3.0.2"
+info:
+  title: API ReadyToGo
+  version: '1.0'
+  description: Настоящий API предназначен для получения информации о созданных мероприятиях,
+              подачи заявки на участие и её редактирования.
+servers:
+- url: http://localhost:8000/api/v1/
+
+paths:
+  /races/:
+    get:
+      tags:
+      - Мероприятия
+      description: "Вывод списка всех мероприятий c их уникальными идентификаторами"
+      summary: "Вывод списка мероприятий"
+      parameters:
+        - $ref: '#/components/parameters/ActiveOnly'
+      responses:
+        '200':
+          description: 'Ok'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AllRaces'
+
+  /races/{id}/:
+    get:
+      tags: 
+        - Мероприятия
+      description: Информация о мероприятии
+      summary: Подробно о мероприятии
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Уникальный идентификатор мероприятия
+        schema:
+          type: integer
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RaceInfo'
+          description: ''
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /registartion/:
+    post:
+      tags:
+      - Регистрация участника
+      description: "создание заявки на участие"
+      summary: "Отправить заявку"
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ParticipantCreate'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParticipantCreate'
+          description: 'Ок'  
+        '400':
+          $ref: '#/components/responses/ValidationError'      
+
+  /registartion/{reg_code}:
+    get:
+      tags:
+      - Регистрация участника
+      description: "Информация о заявке участника"
+      summary: "Информация о заявке"
+      parameters:
+      - name: reg_code
+        in: path
+        required: true
+        description: Идентификатор заявки, полученный при регистрации
+        schema:
+          type: string
+      
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParticipantCreate'
+          description: 'Ок'        
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    put:
+      tags:
+      - Регистрация участника
+      description: "Обновление заявки участника"
+      summary: "Изменение заявки"
+      parameters:
+      - name: reg_code
+        in: path
+        required: true
+        description: Идентификатор заявки, полученный при регистрации
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ParticipantCreate'      
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ParticipantCreate'
+          description: ''
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+components:
+
+  parameters:
+    ActiveOnly:
+      name: active_only
+      in: query
+      description: '`true` - вывод мероприятий, регистрация на которые открыта.'
+      schema:
+        type: string
+      required: false
+
+  responses:
+    ValidationError:
+      description: 'Ошибки валидации в стандартном формате DRF'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ValidationError'  
+
+    NotFound:
+      description: Объект не найден
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/NotFound'
+
+  schemas:
+    AllRaces:
+      type: array
+      items:
+        properties:
+          name:
+            type: string
+            description: название мероприятия
+            example: Большая гонка
+          id:
+            type: integer
+            description: уникальный идентификатор
+            example: 1
+    RaceInfo:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: уникальный идентификатор мероприятия
+
+        name:
+          type: string
+          description: Название мероприятия
+          example: Большая гонка
+
+        date: 
+          type: string
+          description: Дата проведения в формате ДД-ММ-ГГГГ
+          example: '30.01.2023'
+        cup: 
+          type: object
+          properties:
+            id:
+              type: integer
+              description: уникальный идентификатор группы
+            name:
+              type: string
+              description: Название группы мероприятий
+              example: Кубок ХС          
+        town: 
+          type: string
+          description: Название города
+          example: Дефолтсити
+        description:
+          type: string
+          description: Описание мероприятия
+        is_active:
+          type: boolean
+          description: регистрация открыта (True)
+        categories:
+          type: array
+          items:
+            description: Категория участника
+            type: object
+            properties:
+              id:
+                type: integer
+                description: уникальный идентификатор категории
+              name:
+                type: string
+                description: Название категории
+                example: Любители
+
+    ParticipantCreate:           
+      type: object
+      properties:
+        race:
+          type: integer 
+          description: уникальный идентификатор мероприятия
+          example: '1'
+        category:
+          type: integer 
+          description: уникальный идентификатор категории участника
+          example: '1'
+        name:
+          type: string
+          description: имя участника
+          example: Иванов
+        surname:
+          type: string
+          description: фамилия участника
+          example: Петр
+        patronymic:
+          type: string
+          description: отчество участника
+          example: Петрович
+        number:
+          type: integer
+          description: стартовый номер
+        year:
+          type: integer
+          description: год рождения участника
+          example: '2000'
+        club:
+          type: string
+          description: принадлежность к клубу
+          example: ХС райдеры
+        town:
+          type: string
+          description: город участника
+          example: Дефолтсити
+        reg_code:
+          type: string
+          description: уникальный код заявки
+          readOnly: true
+          example: 12wer5-4356
+      required:
+        - race
+        - category
+        - name
+        - surname
+        - year  
+
+    ValidationError:
+      description: Стандартные ошибки валидации DRF
+      type: object
+      properties:
+        field_name:
+          description: 'Название поля, в котором произошли ошибки. Таких полей может быть несколько'
+          example: [ 'Обязательное поле.' ]
+          type: array
+          items:
+            type: string
+
+    NotFound:
+      description: Объект не найден
+      type: object
+      properties:
+        detail:
+          description: 'Описание ошибки'
+          example: "Страница не найдена."
+          type: string  
+
+
