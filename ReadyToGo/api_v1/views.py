@@ -1,8 +1,11 @@
-from registration.models import Races
+from registration.models import Participants, Races
+from registration.utilities import get_reg_code
 from rest_framework.viewsets import ModelViewSet
 
 from .filters import active_only_filter
-from .serializers import RacesSerializer, RaceDetailSerializer
+from .serializers import (
+    ParticipantSerializer, RaceDetailSerializer, RacesSerializer
+    )
 
 
 class RacesViewSet(ModelViewSet):
@@ -22,3 +25,17 @@ class RacesViewSet(ModelViewSet):
         if self.kwargs.get('id'):
             return RaceDetailSerializer
         return super().get_serializer_class()
+
+
+class RegistrationViewSet(ModelViewSet):
+    serializer_class = ParticipantSerializer
+    queryset = Participants.objects.all()
+    pagination_class = None
+    lookup_url_kwarg = 'reg_code'
+    lookup_field = 'reg_code'
+
+    def perform_create(self, serializer):
+        d = serializer.validated_data
+        data = d['race'].name + d['name'] + d['surname'] + d['patronymic']
+        reg_code = get_reg_code(data)
+        serializer.save(reg_code=reg_code)

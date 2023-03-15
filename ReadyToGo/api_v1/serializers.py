@@ -1,17 +1,17 @@
-from registration.models import Categories, Cups, Races
+from registration.models import Categories, Cups, Participants, Races
 from rest_framework import serializers
 
 
 class CupsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cups
-        fields = ['id', 'name']    
+        fields = ['id', 'name']
 
 
 class CategoriesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Categories
-        fields = ['id', 'name'] 
+        fields = ['id', 'name']
 
 
 class RacesSerializer(serializers.ModelSerializer):
@@ -28,3 +28,10 @@ class RaceDetailSerializer(serializers.ModelSerializer):
         model = Races
         fields = ['id', 'name', 'date', 'cup', 'town', 'description',
                   'is_active', 'race_categories']
+
+
+class ParticipantSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Participants
+        fields = '__all__'
+        read_only_fields = ['reg_code']

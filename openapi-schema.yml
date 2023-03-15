@@ -47,7 +47,7 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
-  /registartion/:
+  /registration/:
     post:
       tags:
       - Регистрация участника
@@ -69,7 +69,7 @@ paths:
         '400':
           $ref: '#/components/responses/ValidationError'      
 
-  /registartion/{reg_code}:
+  /registration/{reg_code}:
     get:
       tags:
       - Регистрация участника

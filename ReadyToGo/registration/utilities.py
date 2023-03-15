@@ -115,5 +115,3 @@ def get_reg_code(data):
     to_hash = data.encode()
     hs = hashlib.md5(to_hash).digest()
     return base64.urlsafe_b64encode(hs).decode('ascii').replace('=', '')
-
-
