@@ -197,7 +197,7 @@ components:
         is_active:
           type: boolean
           description: регистрация открыта (True)
-        categories:
+        race_categories:
           type: array
           items:
             description: Категория участника
