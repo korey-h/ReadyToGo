@@ -1,5 +1,6 @@
 from registration.models import Participants, Races
 from registration.utilities import get_reg_code
+from rest_framework import pagination
 from rest_framework.viewsets import ModelViewSet
 
 from .filters import active_only_filter
@@ -11,7 +12,8 @@ from .serializers import (
 class RacesViewSet(ModelViewSet):
     serializer_class = RacesSerializer
     queryset = Races.objects.all()
-    pagination_class = None
+    pagination_class = pagination.PageNumberPagination
+    pagination_class.page_size_query_param = 'limit'
     cust_filters = [active_only_filter]
     lookup_url_kwarg = 'id'
 

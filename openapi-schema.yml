@@ -16,13 +16,15 @@ paths:
       summary: "Вывод списка мероприятий"
       parameters:
         - $ref: '#/components/parameters/ActiveOnly'
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
       responses:
         '200':
           description: 'Ok'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AllRaces'
+                $ref: '#/components/schemas/RacesPages'
 
   /races/{id}/:
     get:
@@ -133,6 +135,22 @@ components:
         type: string
       required: false
 
+    Page:
+      name: page
+      required: false
+      in: query
+      description: Номер страницы.
+      schema:
+        type: integer
+
+    Limit:
+      name: limit
+      required: false
+      in: query
+      description: Количество объектов на странице.
+      schema:
+        type: integer
+
   responses:
     ValidationError:
       description: 'Ошибки валидации в стандартном формате DRF'
@@ -149,6 +167,29 @@ components:
             $ref: '#/components/schemas/NotFound'
 
   schemas:
+    RacesPages:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 12
+          description: 'Общее количество объектов в базе'
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://localhost:8000/api/v1/races/?page=4
+          description: 'Ссылка на следующую страницу'
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://localhost:8000/api/v1/races/?page=2
+          description: 'Ссылка на предыдущую страницу'
+        results:
+          $ref: '#/components/schemas/AllRaces'
+          description: 'Список объектов текущей страницы'    
+
     AllRaces:
       type: array
       items:
