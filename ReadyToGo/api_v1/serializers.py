@@ -35,3 +35,8 @@ class ParticipantSerializer(serializers.ModelSerializer):
         model = Participants
         fields = '__all__'
         read_only_fields = ['reg_code']
+
+    def validate(self, attrs):
+        pre_instance = self.Meta.model(**attrs)
+        pre_instance.clean()
+        return attrs
