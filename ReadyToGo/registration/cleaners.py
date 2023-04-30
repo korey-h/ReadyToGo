@@ -31,11 +31,11 @@ def num_clean(participant):
                                                nums_booked)
 
     if not NumbersChecker.chek_free(participant.number, free_nums):
-        raise ValidationError(
-            f"номер {participant.number} не доступен для "
-            f"категории {participant.category}. "
-            f"{NumbersChecker.str_free(free_nums)}"
-        )
+        raise ValidationError({
+            'number': [f"номер {participant.number} не доступен для "
+                       f"категории {participant.category}. "
+                       f"{NumbersChecker.str_free(free_nums)}"]
+        })
 
 
 def category_clean(participant, model):
@@ -46,10 +46,12 @@ def category_clean(participant, model):
     if not model.objects.filter(
             id=participant.race.id,
             race_categories=participant.category).exists():
-        raise ValidationError(
-            f"выбранная категория не назначена для"
-            f" {participant.race.name} {participant.race.cup.name}"
-        )
+        raise ValidationError({
+            'category': [
+                f"выбранная категория не назначена для"
+                f" {participant.race.name} {participant.race.cup.name}"
+            ]
+        })
 
 
 def unique_person_clean(participant):
@@ -58,10 +60,12 @@ def unique_person_clean(participant):
             surname=participant.surname,
             patronymic=participant.patronymic
             ).exists():
-        raise ValidationError(
-            f"""Участник <{participant.name} {participant.surname}
-            {participant.patronymic}>\n
-            уже подал заявку на {participant.race.name},
-            {participant.race.cup.name}.\n
-            Введите другие Ф.И.О либо перейдите к редактированию заявки."""
-        )
+        raise ValidationError({
+            'name': [
+                f"""Участник <{participant.name} {participant.surname}
+                 {participant.patronymic}>\n
+                уже подал заявку на {participant.race.name},
+                {participant.race.cup.name}.\n
+                Введите другие Ф.И.О либо перейдите к редактированию заявки."""
+            ]
+        })
