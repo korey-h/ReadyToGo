@@ -202,6 +202,14 @@ components:
             type: integer
             description: уникальный идентификатор
             example: 1
+          cup_id:
+            type: integer
+            description: уникальный идентификатор группы
+            example: 1
+          cup_name:
+            type: string
+            description: название группы мероприятий
+            example: Кубок города
     RaceInfo:
       type: object
       properties:

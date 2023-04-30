@@ -15,9 +15,14 @@ class CategoriesSerializer(serializers.ModelSerializer):
 
 
 class RacesSerializer(serializers.ModelSerializer):
+    cup_id = serializers.PrimaryKeyRelatedField(read_only=True)
+    cup_name = serializers.SlugRelatedField(
+        source='cup', read_only=True, slug_field='name'
+        )
+
     class Meta:
         model = Races
-        fields = ['id', 'name']
+        fields = ['id', 'name', 'cup_id', 'cup_name']
 
 
 class RaceDetailSerializer(serializers.ModelSerializer):
