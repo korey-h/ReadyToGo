@@ -43,5 +43,7 @@ class ParticipantSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         pre_instance = self.Meta.model(**attrs)
+        if self.instance:
+            pre_instance.id = self.instance.id
         pre_instance.clean()
         return attrs
