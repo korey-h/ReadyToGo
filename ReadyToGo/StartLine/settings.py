@@ -130,6 +130,8 @@ STATIC_URL = '/static/'
 # настройки моделей
 
 START_NUM = 1
+MAX_AGE = 80
+MIN_AGE = 7
 
 LOGIN_URL = '/auth/login/'
 LOGIN_REDIRECT_URL = 'index'

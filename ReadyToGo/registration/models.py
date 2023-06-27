@@ -2,14 +2,26 @@
 from datetime import datetime
 
 from django.contrib.auth import get_user_model
-from django.core.validators import MinValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from slugify import slugify
 
 from . import cleaners
+from StartLine.settings import MAX_AGE, MIN_AGE, START_NUM
 from .utilities import DefCategory
 
 Users = get_user_model()
+year_now = datetime.now().year
+MIN_YEAR = year_now - MAX_AGE
+MAX_YEAR = year_now - MIN_AGE
+year_validators = [
+    MinValueValidator(
+        MIN_YEAR,
+        message=f'Не старше {MIN_YEAR} г.р.'),
+    MaxValueValidator(
+        MAX_YEAR,
+        message=f'Не младше {MAX_YEAR} г.р.'),
+]
 
 
 def set_def_category(collector, field, sub_objs, using):
@@ -107,16 +119,18 @@ class Categories(models.Model):
                              on_delete=models.CASCADE,
                              related_name='race_categories',
                              )
-    year_old = models.IntegerField(
-        validators=[MinValueValidator(1940, message='Не старше 1940 г.р.'), ])
-    year_yang = models.IntegerField(
-        validators=[MinValueValidator(1940, message='Не старше 1940 г.р.'), ])
+    year_old = models.IntegerField(validators=year_validators)
+    year_yang = models.IntegerField(validators=year_validators)
     number_start = models.IntegerField(
         blank=True, null=True,
-        validators=[MinValueValidator(1, message='Значение не меньше 1'), ])
+        validators=[MinValueValidator(
+            START_NUM,
+            message=f'Значение не меньше {START_NUM}')])
     number_end = models.IntegerField(
         blank=True, null=True,
-        validators=[MinValueValidator(1, message='Значение не меньше 1'), ])
+        validators=[MinValueValidator(
+            START_NUM,
+            message=f'Значение не меньше {START_NUM}')])
     description = models.TextField(max_length=150, blank=True)
     maker = models.ForeignKey(Users,
                               on_delete=models.SET_NULL,
@@ -159,7 +173,7 @@ class Participants(models.Model):
         blank=True,
         default='-',)
     year = models.IntegerField(
-        validators=[MinValueValidator(1940, message='Не старше 1940 г.р.'), ],
+        validators=year_validators,
         verbose_name="Год рождения",
         default=1940)
     number = models.IntegerField(
