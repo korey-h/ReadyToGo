@@ -1,3 +1,5 @@
+from rest_framework.exceptions import PermissionDenied
+
 from registration.models import Participants, Races
 from registration.utilities import get_reg_code
 from rest_framework import pagination
@@ -36,8 +38,21 @@ class RegistrationViewSet(ModelViewSet):
     lookup_url_kwarg = 'reg_code'
     lookup_field = 'reg_code'
 
+    @staticmethod
+    def _check_race_is_active(serializer):
+        d = serializer.validated_data
+        if not d['race'].is_active:
+            raise PermissionDenied(
+                detail='Регистрация на мероприятие прекращена.'
+            )
+
     def perform_create(self, serializer):
+        self._check_race_is_active(serializer)
         d = serializer.validated_data
         data = d['race'].name + d['name'] + d['surname'] + d['patronymic']
         reg_code = get_reg_code(data)
         serializer.save(reg_code=reg_code)
+
+    def perform_update(self, serializer):
+        self._check_race_is_active(serializer)
+        serializer.save()
