@@ -1,7 +1,4 @@
 version: '3.3'
-
-volumes:
-  postgres_data:
   
 services:
 
@@ -9,7 +6,7 @@ services:
     image: postgres:12.4
     restart: always
     volumes:
-      - postgres_data:/var/lib/postgresql/data_rtg/
+      - postgres_rtg_data:/var/lib/postgresql/data/
     env_file:
       - ../.env
       
@@ -26,6 +23,7 @@ services:
       
   nginx:
     image: nginx:1.19.3
+    restart: always
     ports:
       - 80:80
     volumes:
@@ -37,6 +35,6 @@ services:
       - web
 
 volumes:
-  postgres_data:
+  postgres_rtg_data:
   static_value:
   media_value:
