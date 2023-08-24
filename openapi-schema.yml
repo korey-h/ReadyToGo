@@ -259,6 +259,14 @@ components:
                 type: string
                 description: Название категории
                 example: Любители
+              years_old:
+                type: integer
+                description: наиболее старший разрешенный год рождения
+                example: 1940
+              years_yang:
+                type: integer
+                description: самый младший разрешенный год рождения
+                example: 2000
 
     ParticipantCreate:           
       type: object

@@ -11,7 +11,7 @@ class CupsSerializer(serializers.ModelSerializer):
 class CategoriesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Categories
-        fields = ['id', 'name']
+        fields = ['id', 'name', 'year_old', 'year_yang']
 
 
 class RacesSerializer(serializers.ModelSerializer):
