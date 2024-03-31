@@ -1,18 +1,7 @@
-<div class="container" >
-  <div class="row" style="background: rgb(21, 71, 199)">
-    <div class="col">
-      <h6 class="card-header" > <a href="\" style="color: white";>Главная страница</a></h6>
-    </div>
-    <div class="col">
-      <h6 class="card-header" > <a href="{% url 'all_cups' %}" style="color: white";>Все Кубки</a></h6>
-    </div>
-    <div class="col">
-      <h6 class="card-header" > <a href="{% url 'cup_create' %}" style="color: white";>Создать кубок</a></h6>
-    </div>
-    <div class="col">
-      <h6 class="card-header" > <a href="{% url 'race_create' %}" style="color: white";>Создать соревнование</a></h6>
-    </div>
-    <div class="col"></div>
-    <div class="col"></div>
-  </div>
-</div>
+<nav class="nav">
+  <a class="nav-link" href="\" style="color: white">Главная страница</a>
+  <a class="nav-link" href="{% url 'all_cups' %}" style="color: white"> Все Кубки</a>
+  <a class="nav-link" href="{% url 'cup_create' %}" style="color: white"> Создать кубок</a>
+  <a class="nav-link" href="{% url 'race_create' %}" style="color: white"> Создать соревнование</a>
+</nav>
+<br>

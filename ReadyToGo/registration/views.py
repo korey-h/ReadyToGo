@@ -33,7 +33,7 @@ def index(request):
     paginator = Paginator(races, 10)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
-    return render(request, 'index.html', {'page': page, 'filter_form': form})
+    return render(request, 'index.html', {'page': page, 'filter_form': form.as_div()})
 
 
 def race_info(request, slug):

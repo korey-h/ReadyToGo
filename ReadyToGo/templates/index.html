@@ -1,14 +1,20 @@
 ﻿{% extends "base.html" %}
 {% block title %}Все соревнования{% endblock %}
 {% block content %}
+
 <div class="container"> 
-<form method="post" action="{{ request.path }}">
+<form method="post" action="{{ request.path }}" class="row g-3">
   {% csrf_token %}
-  {{filter_form}}
-  <input type="submit"  class="btn-check" name="options-outlined" id="danger-outlined" autocomplete="off">
-  <label class="btn btn-outline-primary" for="danger-outlined">Найти</label>
-</form>
-</div> 
+  {{filter_form }}
+  <div class="col-md-2">
+    <input type="submit"  class="btn-check" name="options-outlined" id="btn_find" autocomplete="off">
+    <label class="btn btn-outline-primary mt-4" for="btn_find">Найти</label>
+  </div></form>
+</div>
+
+
+
+
 <div class="container"> 
     <table class="table table-bordered table-sm" >
       <thead style="background: rgb(158, 215, 225)"> 

@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 
 from .models import Cups, Participants
+from .cust_widgets import CustDateInput, CustSelect
 
 User = get_user_model()
 
@@ -53,6 +54,17 @@ class RegEditForm(forms.Form):
 
 
 class RaceFilterForm(forms.Form):
-    from_time = forms.DateField(required=False, label='период от')
-    to_time = forms.DateField(required=False, label='период до')
-    cup = forms.ModelChoiceField(required=False, queryset=Cups.objects.all())
+    from_time = forms.DateField(required=False, label='период от', widget=CustDateInput())
+    to_time = forms.DateField(required=False, label='период до', widget=CustDateInput())
+    cup = forms.ModelChoiceField(required=False, label='Группа', queryset=Cups.objects.all(),
+                                 widget=CustSelect())
+
+    def as_div(self):
+        "Return this form rendered as HTML <div>  </div>."
+        return self._html_output(
+            normal_row='<div class="col-md-2">%(label)s%(field)s%(help_text)s</div>',
+            error_row='%s',
+            row_ender='</p>',
+            help_text_html=' <span class="helptext">%s</span>',
+            errors_on_separate_row=True,
+        )

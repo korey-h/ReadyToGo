@@ -43,11 +43,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.forms',
     'rest_framework',
     'event',
     'registration',
     'users',
-    'api_v1',
+    'api_v1'
 ]
 
 MIDDLEWARE = [
@@ -60,6 +61,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+FORM_RENDERER = 'django.forms.renderers.TemplatesSetting'
 ROOT_URLCONF = 'StartLine.urls'
 
 TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
