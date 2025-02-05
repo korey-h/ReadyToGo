@@ -9,24 +9,25 @@
         <div class="card">
             <div class="card-header">Зарегистрироваться</div>
             <div class="card-body">
-
-                    {% for error in form.errors %}
-                        <div class="alert alert-danger" role="alert">
-                            {{ error }}
-                        </div>
-                    {% endfor %}
-
-
                 <form method="post" action="{% url 'signup' %}">
                     {% csrf_token %}
+
+                    {% if form.non_field_errors %}  
+                      <div class="alert alert-danger">  
+                        {{ form.non_field_errors }}  
+                      </div>  
+                    {% endif %}
 
                     {% for field in form %}
                         <div class="form-group row" aria-required={% if field.field.required %}"true"{% else %}"false"{% endif %}>
                                 <label for="{{ field.id_for_label }}" class="col-md-4 col-form-label text-md-right">{{ field.label }}{% if field.field.required %}<span class="required">*</span>{% endif %}</label>
                                 <div class="col-md-6">
-                                    {{ field  }}
+                                    <p>{{ field }}</p>
                                     {% if field.help_text %}
-                                    <small id="{{ field.id_for_label }}-help" class="form-text text-muted">{{ field.help_text|safe }}</small>
+                                      <small id="{{ field.id_for_label }}-help" class="form-text text-muted">{{ field.help_text|safe }}</small>
+                                    {% endif %}
+                                    {% if field.errors %} 
+                                      <ul class="alert alert-danger">{{ field.errors }}</ul>  
                                     {% endif %}
                                 </div>
                         </div>

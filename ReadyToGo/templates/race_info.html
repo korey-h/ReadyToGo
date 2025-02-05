@@ -27,9 +27,18 @@
         {% endif %}
       </p>
       <div class="card-body">
-        <p>
-          {{ race.description }}
-        </p>
+        {% if is_maker %}
+          Идентификатор мероприятия: {{ race.id }}
+          <p>Ссылка для регистрации через Телеграм-бота: <a href="">t.me/readytogo_reg_bot?start={{ race.id }}</a></p>
+        {% endif %}
+      </div>
+      <div class="card"></div> 
+        {% if race.description %}
+          <h3 class="card-header">Описание мероприятия:</h3>
+          <div class="card-body">
+            <p>{{ race.description }}</p>
+          </div>
+        {% endif %}        
       </div>
     </div>
   </article>
