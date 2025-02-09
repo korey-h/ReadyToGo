@@ -6,5 +6,4 @@ WORKDIR /code
 COPY ./requirements.txt .
 COPY ./ReadyToGo .
 RUN pip3 install -r requirements.txt --no-cache-dir
-RUN python manage.py collectstatic
 CMD gunicorn StartLine.wsgi:application --bind 0.0.0.0:8001
