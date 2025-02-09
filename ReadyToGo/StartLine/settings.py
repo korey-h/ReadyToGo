@@ -143,6 +143,7 @@ USE_TZ = True
 
 STATIC_URL = '/static_backend/'
 STATIC_ROOT = '/var/html/static_backend/'
+STATICFILES_DIRS = [BASE_DIR + "/templates/static", ]
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = '/var/html/media/'

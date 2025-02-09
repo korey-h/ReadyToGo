@@ -134,3 +134,6 @@ Start_Point/
 
 .vscode
 .vscode/
+
+# Collected static files
+static_backend

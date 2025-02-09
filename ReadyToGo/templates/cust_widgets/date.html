@@ -1,1 +1,11 @@
-<input type="text" name="{{widget.name}}" id="id_to_time_" class="form-control">
+<input type="text" name="{{widget.name}}" id="id_{{widget.name}}" class="form-control">
+
+<script type="text/javascript">
+    $(function () {
+      $('#id_{{widget.name}}').datetimepicker({
+          locale: 'ru',
+          stepping:10,
+          format: 'DD.MM.YYYY',
+        });
+    });
+</script>
