@@ -23,6 +23,7 @@ class DefCategory:
         }
 
         default = category_class(**kwargs)
+        default.maker = race_obj.maker
         default.save()
         return default
 

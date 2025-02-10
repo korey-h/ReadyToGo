@@ -102,9 +102,6 @@ class RaceView(LoginRequiredMixin, MakerRequiredMixin,
     template_name = 'race_create_form.html'
 
     def get_success_url(self):
-        url = reverse('race_create')
-        if self.request.path == url:
-            return reverse('index')
         slug = self.object.slug
         return reverse('race_info', kwargs={'slug': slug})
 
@@ -177,7 +174,9 @@ class CategoryView(LoginRequiredMixin, MakerRequiredMixin,
     def form_valid(self, form):
         self.object = form.save(commit=False)
         if not self.object.id:
-            self.object.maker = self.request.user
+            slug = self.kwargs.get('race_slug')
+            race = Races.objects.get(slug=slug)
+            self.object.maker = race.maker
         self.object.save()
         return HttpResponseRedirect(self.get_success_url())
 
