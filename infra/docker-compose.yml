@@ -24,8 +24,9 @@ services:
   nginx:
     image: nginx:1.19.3
     restart: always
-    ports:
-      - 80:80
+    ports: # в конфиге серверного nginx настроить proxy_pass на порты, которые слушает контейнер (8085 и 8083)
+      - 8085:80
+      - 8083:443
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
       - static_value:/var/html/static_backend/
