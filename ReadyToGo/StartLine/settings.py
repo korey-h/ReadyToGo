@@ -32,7 +32,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 DEBUG = False
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'backendrtg', 'ready-to-go.ru']
-
+USE_X_FORWARDED_HOST = True
 
 # Application definition
 
@@ -162,7 +162,7 @@ LOGIN_URL = '/auth/login/'
 LOGIN_REDIRECT_URL = 'index'
 LOGOUT_REDIRECT_URL = 'index'
 SITE_DOMAIN = os.environ.get('SITE_DOMAIN') 
-SITE_PROTOCOL = 'http'
+SITE_PROTOCOL = 'https'
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',  ## noqa
